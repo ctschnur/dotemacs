@@ -1,0 +1,4 @@
+* dotemacs
+Emacs configuration files + loose elisp packages.
+So far they only work reliably on Linux (Ubuntu). 
+TODO: make it work cross-platform (Windows 10 and Linux (Ubuntu)).  

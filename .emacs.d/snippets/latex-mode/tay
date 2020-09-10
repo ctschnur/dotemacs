@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: tay
+# key: taylor
+# --
+\mathrm{T}_{${1:(x,a)}} ${2:f(x)}
