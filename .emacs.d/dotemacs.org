@@ -288,6 +288,8 @@ Make sure that fzf is installed and in your path.
 
 #+RESULTS:
 
+~helm-projectile-ag~ is a great function for refactoring code, but ag comes only native to Linux and not Windows. 
+
 ** helm-ag
 #+BEGIN_SRC emacs-lisp
   (use-package helm-ag
@@ -311,11 +313,13 @@ Make sure that fzf is installed and in your path.
 These three packages work in combination.
 Counsel (a lot of smart autocompletion) and swiper (isearch enhancement/replacement) can be installed like this:
 
+On Linux, do 
 #+BEGIN_SRC shell
 sudo apt install elpa-counsel
 #+END_SRC
 
 #+RESULTS:
+sadly, it doesn't exist on Windows.
 
 *** counsel
 #+BEGIN_SRC emacs-lisp
