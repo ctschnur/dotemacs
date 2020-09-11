@@ -36,8 +36,14 @@
 (defun make-frame-almost-fit-desktop (&optional monitor)
   "Resize a frame so that it is almost fullscreen, but leave small margins.
 If MONITOR is nil, use the current frame's monitor."
-  (let* ((down-scale-vertical 0.925)
-         (down-scale-horizontal 0.97)
+  (let* ((down-scale-vertical (if (eq system-type 'windows-nt)
+                                  0.85
+                                (if (eq system-type 'gnu/linux)
+                                    0.925)))
+         (down-scale-horizontal (if (eq system-type 'windows-nt)
+                                  0.96
+                                (if (eq system-type 'gnu/linux)
+                                    0.97)))
          (cur-monitor (if monitor monitor (cs-frame-get-frames-monitor)))
          (monitor-pixel-width ;; (x-display-pixel-width)
           (nth 3 (assq 'geometry cur-monitor)))
@@ -46,13 +52,19 @@ If MONITOR is nil, use the current frame's monitor."
     (modify-frame-parameters (selected-frame)
                              `((width . (text-pixels . ,(round (* down-scale-horizontal
                                                                   monitor-pixel-width))))
-                               (height . (text-pixels . ,(round (* down-scale-vertical
+                               (height . (text-pixels . ,(round( * down-scale-vertical
                                                                    monitor-pixel-height))))
                                (left . ,(round (* (/ (- 1.0 down-scale-horizontal)
-                                                     2.0)
+                                                     (if (eq system-type 'gnu/linux)
+                                                         2.0
+                                                       (if (eq system-type 'windows-nt)
+                                                           3.0)))
                                                   monitor-pixel-width)))
                                (top . ,(round (* (/ (- 1.0 down-scale-vertical)
-                                                    2.0)
+                                                    (if (eq system-type 'gnu/linux)
+                                                         2.0
+                                                       (if (eq system-type 'windows-nt)
+                                                           3.0)))
                                                  monitor-pixel-height)))))))
 
 

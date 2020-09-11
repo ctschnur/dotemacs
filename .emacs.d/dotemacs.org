@@ -1,3 +1,4 @@
+
 * Package-Initialize, repos, path
 ** COMMENT melpa and org repos
 This is done in ~.emacs~.
@@ -7,6 +8,7 @@ This is done in ~.emacs~.
   (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
   (package-initialize)
   (setq package-check-signature nil)
+  
 #+END_SRC
 
 #+RESULTS:
@@ -40,7 +42,7 @@ This is done in ~.emacs~ as well.
 
 * global constants
 #+BEGIN_SRC emacs-lisp
-  (defconst cs-elisp-config-base-dir (expand-file-name "~/.emacs.d/elisp/"))
+  (defconst cs-elisp-config-base-dir (concat user-emacs-directory "elisp/"))
   (add-to-list 'load-path (expand-file-name cs-elisp-config-base-dir))
 #+END_SRC
 
@@ -52,15 +54,38 @@ This is the path for (yet) unstructured config code
 * Package-Management
 ** use-package
 #+BEGIN_SRC emacs-lisp
-  ;; ---- use-package initialization, make sure use-package.el is cloned into ~/.emacs.d
-  ;; This is only needed once, near the top of the file
-  (eval-when-compile
-    ;; Following line is not needed if use-package.el is in ~/.emacs.d
-    ;; (add-to-list 'load-path "<path where use-package is installed>")
-    (require 'use-package))
 
-  ;; use-package
-  (setq use-package-always-ensure t)
+  (message "hi from dotemacs.org")
+    ;; ---- use-package initialization, make sure use-package.el is cloned into ~/.emacs.d
+    ;; This is only needed once, near the top of the file
+    ;; (eval-when-compile
+    ;;   ;; Following line is not needed if use-package.el is in ~/.emacs.d
+    ;;   ;; (add-to-list 'load-path "<path where use-package is installed>")
+    ;;   (require 'use-package))
+
+  ;; This is only needed once, near the top of the file
+    ;; Following line is not needed if use-package.el is in ~/.emacs.d
+
+
+  (message "on windows: " (prin1-to-string (eq system-type 'windows-nt)
+))
+	(if (eq system-type 'windows-nt)
+	    (progn 
+	      (message "we're on windows")
+	      (unless (file-exists-p "C:/Users/nanospin/misc/use-package/")
+	        (message "use-package install directory not found"))
+              (message "hey there")
+	      (add-to-list 'load-path (file-name-as-directory "C:/Users/nanospin/misc/use-package/")))
+	  (message "we're NOT on windows"))
+					   
+	(require 'use-package)
+
+    ;; use-package
+    (setq use-package-always-ensure t)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (message "hi from dotemacs.org, after use-package init")
 #+END_SRC
 
 * Path
@@ -214,12 +239,14 @@ like ~query-replace-regexp~, but with live preview everywhere in the buffer, as 
 ** Undo-tree
 Version 0.6.5 produces errors when creating new frames. 0.6.6 fixes this (ostensibly).
 #+BEGIN_SRC emacs-lisp
-  (require 'undo-tree)
-  ;; (undo-tree-mode 1)
-  (global-undo-tree-mode 1)
-
-  (global-set-key (kbd "C-/") 'undo-tree-undo)
-  (global-set-key (kbd "C-?") 'undo-tree-redo)
+  (use-package undo-tree
+    :ensure t
+    :config 
+    ;; (require 'undo-tree)
+    ;; (undo-tree-mode 1)
+    (global-undo-tree-mode 1)
+    (global-set-key (kbd "C-/") 'undo-tree-undo)
+    (global-set-key (kbd "C-?") 'undo-tree-redo))
 #+END_SRC
 
 #+RESULTS:
@@ -238,7 +265,7 @@ Does a lot of useful auto-completion stuff all over emacs, e.g. when finding fil
   (global-set-key (kbd "C-2") 'helm-mini))
 #+END_SRC
 
-** helm-fzf
+** COMMENT helm-fzf
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "fluid/helm-fzf")))
   (require 'helm-fzf)
@@ -272,7 +299,7 @@ Make sure that fzf is installed and in your path.
 
 ** cs-helm-projectile-ag
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path (expand-file-name "~/.emacs.d/elisp/fluid/"))
+  (add-to-list 'load-path (expand-file-name (concat user-emacs-directory "elisp/fluid/")))
   (require 'cs-helm-projectile-ag)
   (define-key prog-mode-map (kbd "C-, C-r") 'cs-helm-projectile-ag)
 #+END_SRC
@@ -450,13 +477,12 @@ makes swiper use helm
     (require 'cs-org-mode-general)
     (require 'cs-org-mode-utilities)
     (require 'cs-org-agenda)
-    (require 'cs-org-latex-preview)
     (require 'cs-org-latex-export)
     (require 'cs-org-babel)
     (define-key org-mode-map (kbd "C-, d") 'cs-jump-to-def-from-inside-org-code-block))
 #+END_SRC
 
-** org-image-tools
+** COMMENT org-image-tools
 my own tools for images in org-mode
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path (concat (expand-file-name cs-elisp-config-base-dir) "org-image-tools"))
@@ -661,7 +687,7 @@ Modal editing, more emacs-like than evil mode.
 #+RESULTS:
 : t
 
-** org-pdfview
+** COMMENT org-pdfview
 #+BEGIN_SRC emacs-lisp
   (use-package org-pdfview
     ;; org-pdfview: it's not a minor-mode, just a few functions that adapt
@@ -690,7 +716,8 @@ Modal editing, more emacs-like than evil mode.
 #+END_SRC
 
 #+RESULTS:
-: t
+| use-package | Cannot load org-pdfview                                              | :error | nil |
+| use-package | Failed to install org-pdfview: Package ‘org-pdfview-’ is unavailable | :error | nil |
 
 ** org-ref
 #+BEGIN_SRC emacs-lisp
@@ -1042,7 +1069,9 @@ Provide multiple cursors
 ** emacs-lisp
 Bind some keys and some hooks
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
+;; (eval-after-load 'paredit
+;;   (add-hook 'emacs-lisp-mode-hook 'paredit-mode))
+
   (define-key emacs-lisp-mode-map (kbd "C-, e") 'eval-buffer)
   (define-key emacs-lisp-mode-map (kbd "C-M-<") (lambda () (transpose-sexps -1)))
   (define-key emacs-lisp-mode-map (kbd "C-M->") (lambda () (transpose-sexps +1)))
@@ -1081,12 +1110,13 @@ Bind some keys and some hooks
 
       (eval-after-load 'undo-tree
         (define-key undo-tree-map (kbd "C-_") nil))
+
       ;; (global-set-key (kbd "C-_") 'cs/insert-latex-subscript)
 
       (setq yas-triggers-in-field t)
       (setq yas-maybe-expand nil)
 
-      (defvar cs/default-snippet-dir (expand-file-name"~/.emacs.d/snippets"))
+      (defvar cs/default-snippet-dir (expand-file-name (concat user-emacs-directory "snippets/")))
 
       ;; exclusively put snippets in here, so they aren't scattered
       ;; around everywhere
@@ -1144,6 +1174,7 @@ Bind some keys and some hooks
   ;;                    #'before-yas-expand-advice)
   ;;   (remove-function (symbol-function 'yas-expand)
   ;;                    #'after-yas-expand-advice))
+
 #+END_SRC
 
 #+RESULTS:
@@ -1309,7 +1340,9 @@ Completion for many languages or just tools in general, just plug in the right c
 
     ;; You can use semantic to parse
     ;; and enable jumping to other-than-project-local source files
-    (semantic-add-system-include "/usr/local/include")
+    (with-system gnu/linux 
+      (semantic-add-system-include "/usr/local/include"))
+
     ;; (It takes a while at first, but is fast afterwards) You may use semantic
     ;; in combination with GNU Global and ggtags
     ;; (semantic-add-system-include "~/linux/include")
@@ -1358,10 +1391,12 @@ Completion for many languages or just tools in general, just plug in the right c
 #+BEGIN_SRC emacs-lisp
   (use-package py-autopep8
     :ensure t
+    :config
     (define-key python-mode-map (kbd "C-, s") 'py-autopep8))
 #+END_SRC
 
 #+RESULTS:
+: t
 
 *** anaconda-mode
 This is a mode for editing and running python. It actually is not dependent on having anaconda python specifically installed.
@@ -1445,7 +1480,11 @@ This provides virtual environment support for python. If you want to activate a 
   (use-package pyvenv
     :ensure t
     :init
-    (setenv "WORKON_HOME" (expand-file-name "~/anaconda3/envs"))
+    (with-system gnu/linux
+      (setenv "WORKON_HOME" (expand-file-name "~/anaconda3/envs")))
+    (with-system windows-nt
+      (setenv "WORKON_HOME" (expand-file-name "C:/Users/nanospin/AppData/Local/Continuum/anaconda3/envs"))
+    )
 
   ;; convention
     (pyvenv-mode 1)
@@ -1652,7 +1691,7 @@ This tool is based on semantic. It doesn't really refactor, but it can e.g. refo
 : t
 
 ** hylang
-*** hy-mode
+*** COMMENT hy-mode
 #+BEGIN_SRC emacs-lisp
   (use-package hy-mode
     :ensure t
@@ -1709,7 +1748,7 @@ This tool is based on semantic. It doesn't really refactor, but it can e.g. refo
 : t
 
 
-** sage
+** COMMENT sage
 *** sage-shell-mode
 #+BEGIN_SRC emacs-lisp
 (use-package sage-shell-mode
@@ -1766,7 +1805,7 @@ This tool is based on semantic. It doesn't really refactor, but it can e.g. refo
 #+END_SRC
 
 * my own packages/larger configs
-** klin
+** COMMENT klin
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "klin")))
   (require 'klin)
@@ -1788,10 +1827,11 @@ Enables transferring (or copying) an org file with it's linked assets to anoter 
 ** cs-static-blog
 Publishing a github pages blog directly from org-mode notes
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path (concat (expand-file-name cs-elisp-config-base-dir) "cs-static-blog"))
-  (require 'cs-org-blog-html-backend)
-  (require 'cs-org-publish)
-  (require 'cs-org-publish-utils)
+  (with-system gnu/linux
+    (add-to-list 'load-path (concat (expand-file-name cs-elisp-config-base-dir) "cs-static-blog"))
+    (require 'cs-org-blog-html-backend)
+    (require 'cs-org-publish)
+    (require 'cs-org-publish-utils))
 #+END_SRC
 
 #+RESULTS:
@@ -1800,8 +1840,9 @@ Publishing a github pages blog directly from org-mode notes
 ** cs-org-drill
 My org-drill installation
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "cs-org-drill")))
-  (require 'cs-org-drill)
+  (with-system gnu/linux
+    (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "cs-org-drill")))
+    (require 'cs-org-drill))
 #+END_SRC
 
 #+RESULTS:
@@ -1848,7 +1889,7 @@ Make a minor mode with keys that override all other keys and always take precend
 #+RESULTS:
 : cs-org-latex-preview
 
-** asy-mode 
+** COMMENT asy-mode 
 editing mode for asymptote
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path (expand-file-name "/usr/share/emacs/site-lisp/asy-mode.el"))
@@ -1883,12 +1924,12 @@ Managing jupyter sessions, opening ~.ipynb~ files from within emacs
 : jupyters-manager
 
 
-** random strings
+** COMMENT random strings
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path (expand-file-name cs-elisp-config-base-dir))
   (require 'cs-random-string)
 #+END_SRC
-** delete whitespace
+** COMMENT delete whitespace
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path (concat (expand-file-name cs-elisp-config-base-dir) "xah/"))
   (require 'delete-whitespace)
@@ -1899,8 +1940,9 @@ Managing jupyter sessions, opening ~.ipynb~ files from within emacs
 
 ** cs-python-tmux-debugger
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "python-tmux-debugger")))
-  (require 'python-tmux-debugger)
+  (with-system gnu/linux
+    (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "python-tmux-debugger")))
+    (require 'python-tmux-debugger))
 #+END_SRC
 
 #+RESULTS:
