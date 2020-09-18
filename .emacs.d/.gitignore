@@ -1,2 +1,9 @@
 *.elc
 *.eld
+semanticdb/
+*.cache
+*.eld
+history
+server
+srecode-map.el
+recentf
