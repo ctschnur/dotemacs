@@ -507,7 +507,31 @@ my own tools for images in org-mode
   (define-key org-mode-map (kbd "C-x C-y") 'cs-paste-image-into-org)
 #+END_SRC
 
+** markdown-mode
+#+BEGIN_SRC emacs-lisp :results none
+(use-package markdown-mode
+  :ensure t
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
+#+END_SRC
+
 ** style packages
+*** font 
+#+BEGIN_SRC emacs-lisp
+(setq my-prefered-font
+      (cond ((eq system-type 'windows-nt) "consolas")
+            ((eq system-type 'gnu/linux) "mono")
+            (t nil)))
+
+(when my-prefered-font
+  (set-frame-font my-prefered-font nil t))
+#+END_SRC
+
+#+RESULTS:
+
+
 *** hide-mode-line
 #+BEGIN_SRC emacs-lisp
 (use-package hide-mode-line
@@ -1635,13 +1659,26 @@ search in all file for a name, and then you can perform operations on these occu
 
 *** python-mode
 #+BEGIN_SRC emacs-lisp
-  (defun python-execute-main-in-terminal()
-    (interactive)
-    ;; usually the popup-shell has name *ansi-term-1* where, 1 is the index
-    (comint-send-string (shell-pop--shell-buffer-name 1) "python3 main.py\n"))
+    ;; make sure that a python exists in the path, otherwise throw an error message
+    ;; on windows, python is not by default in PATH. 
+    ;; usually, I like to install anaconda and add it's `base` environment python.exe to path
+  (defun add-windows-python-to-path (&optional windows-python-path)
+    "setting the python path on windows"
+    (unless windows-python-path
+      (setq windows-python-path
+            (file-name-as-directory "C:\\Users\\nanospin\\AppData\\Local\\Continuum\\anaconda3")))
+    (setenv "PATH" (concat windows-python-path ";" (getenv "PATH")))
+    ;; (getenv "PATH")
+    )
 
-  ;; (define-key term-mode-map (kbd "C-, e") 'python-execute-main-in-terminal)
-  ;; (define-key python-mode-map (kbd "C-, e") 'python-execute-main-in-terminal)
+
+    (defun python-execute-main-in-terminal()
+      (interactive)
+      ;; usually the popup-shell has name *ansi-term-1* where, 1 is the index
+      (comint-send-string (shell-pop--shell-buffer-name 1) "python3 main.py\n"))
+
+    ;; (define-key term-mode-map (kbd "C-, e") 'python-execute-main-in-terminal)
+    ;; (define-key python-mode-map (kbd "C-, e") 'python-execute-main-in-terminal)
 #+END_SRC
 
 #+RESULTS:
