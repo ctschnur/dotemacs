@@ -165,7 +165,7 @@ Set scrolling behaviour for mouse (it's choppy otherwise)
     (setq mouse-wheel-scroll-amount '(1
                                       ((shift) . 1))
           mouse-wheel-progressive-speed
-          nil))
+          t))
 
   (setq scroll-step 1
         scroll-margin 0
@@ -283,18 +283,48 @@ Does a lot of useful auto-completion stuff all over emacs, e.g. when finding fil
 
 ** helm-projectile
 #+BEGIN_SRC emacs-lisp
-  (use-package helm-projectile
-    :ensure t
-    :config
-    (defun helm-projectile-find-file-from-directory (&optional arg)
-      "If ARG is C-u once, use swiper-thing-at-point"
-      (interactive "P")
-      (if (equal arg '(4))
-          (let* ((projectile-require-project-root nil))
-            (helm-projectile-find-file))
-        (helm-projectile-find-file)))
+    (use-package helm-projectile
+      :ensure t
+      :config
 
-    (global-set-key (kbd "C-, C-f") 'helm-projectile-find-file-from-directory))
+
+      (defun helm-projectile-find-file-from-directory (&optional arg)
+        "If ARG is C-u once, use swiper-thing-at-point"
+        (interactive "P")
+        (if (equal arg '(4))  
+            (let* ((projectile-require-project-root nil) ;; FIXME: this doesn't actually work for me, for some reason
+  )
+              (helm-projectile-find-file))
+          (helm-projectile-find-file)))
+
+      (global-set-key (kbd "C-, C-f") 'helm-projectile-find-file-from-directory)
+
+      ;; (defalias 'helm-projectile-find-file-arb
+  ;;       #'(lambda (&optional arg)
+  ;;           "Use projectile with Helm for finding files in project
+
+  ;; With a prefix ARG invalidates the cache first."
+  ;;           (interactive "P")
+  ;;           (if (projectile-project-p)
+  ;;               (projectile-maybe-invalidate-cache arg)
+  ;;             ;; (unless t
+  ;;             ;;   (error "You're not in a project"))
+  ;;             )
+  ;;           (let ((helm-ff-transformer-show-only-basename nil)
+  ;;                 (helm-boring-file-regexp-list nil))
+  ;;             (helm :sources helm-source-projectile-files-and-dired-list
+  ;;                   :buffer (concat "*helm projectile: "
+  ;;                                   (projectile-project-name)
+  ;;                                   "*")
+  ;;                   :truncate-lines helm-projectile-truncate-lines
+  ;;                   :prompt (projectile-prepend-project-name "Find file: ")))))
+      )
+
+  ;; (helm-projectile-command "find-file-arbitrary" helm-source-projectile-files-and-dired-list "Find file: " t)
+  ;; also, this doesn't work
+
+
+
 #+END_SRC
 
 #+RESULTS:
@@ -317,6 +347,7 @@ function can be made to work.
   (add-to-list 'load-path (expand-file-name (concat user-emacs-directory "elisp/fluid/")))
   (require 'cs-helm-projectile-ag)
   (define-key prog-mode-map (kbd "C-, C-r") 'cs-helm-projectile-ag)
+  ;; (define-key org-mode-map (kbd "C-, C-r") 'cs-helm-projectile-ag)
 #+END_SRC
 
 #+RESULTS:
@@ -1064,7 +1095,13 @@ Provide multiple cursors
 #+BEGIN_SRC emacs-lisp
   (defun printbreakpoint ()
     (interactive)
-    (insert "import ipdb; ipdb.set_trace()  # noqa BREAKPOINT"))
+
+    (cond
+     ((eq system-type 'windows-nt)
+      (insert "import pdb; pdb.set_trace()  # noqa BREAKPOINT"))
+     ((eq system-type 'gnu/linux)
+      (insert "import ipdb; ipdb.set_trace()  # noqa BREAKPOINT"))
+     (t nil)))
 
   (add-hook 'python-mode-hook
             (lambda ()
@@ -1072,7 +1109,7 @@ Provide multiple cursors
 #+END_SRC
 
 #+RESULTS:
-| anaconda-eldoc-mode | anaconda-mode | origami-mode | (lambda nil (interactive) (define-key python-mode-map (kbd C-)) (quote sp-forward-slurp-sexp)) (define-key python-mode-map (kbd C-}) (quote sp-forward-barf-sexp)) (define-key python-mode-map (kbd <M-up>) (quote sp-splice-sexp-killing-backward))) | (lambda nil (define-key python-mode-map (kbd C-, b) (quote printbreakpoint))) |
+| anaconda-eldoc-mode | anaconda-mode | origami-mode | (lambda nil (interactive) (define-key python-mode-map (kbd C-)) 'sp-forward-slurp-sexp) (define-key python-mode-map (kbd C-}) 'sp-forward-barf-sexp) (define-key python-mode-map (kbd <M-up>) 'sp-splice-sexp-killing-backward)) | (lambda nil (define-key python-mode-map (kbd C-, b) 'printbreakpoint)) |
 
 ** latex
 #+BEGIN_SRC emacs-lisp
@@ -1349,7 +1386,7 @@ implements folding for many modes
 #+RESULTS:
 : t
 
-*** COMMENT company
+*** company
 Completion for many languages or just tools in general, just plug in the right completion front ends.
 #+BEGIN_SRC emacs-lisp
 (use-package company
@@ -1359,6 +1396,7 @@ Completion for many languages or just tools in general, just plug in the right c
   (setq company-backends (delete 'company-semantic company-backends))
   (define-key c-mode-map  [(tab)] 'company-complete)
   (define-key c++-mode-map  [(tab)] 'company-complete)
+  (setq company-idle-delay 1)
   ;; Weirdly, I didn't manually have to specify all my includes,
   ;; maybe because projectile works with it?
   ;; ((nil . ((company-clang-arguments . ("-I/home/<user>/project_root/include1/"
@@ -1420,8 +1458,13 @@ Completion for many languages or just tools in general, just plug in the right c
   (use-package dumb-jump
     :ensure t
     :config
-    ;; (add-hook 'LaTeX-mode-hook 'dumb-jump-mode)
-    )
+    (add-hook 'LaTeX-mode-hook 'dumb-jump-mode)
+
+    ;; as long as no smart code navigation works on windows: 
+    (if (eq system-type 'windows-nt)
+        (progn
+          (add-hook 'python-mode-hook 'dumb-jump-mode)
+          (define-key python-mode-map (kbd "M-.") 'dumb-jump-go))))
 #+END_SRC
 
 #+RESULTS:
@@ -1439,19 +1482,21 @@ Completion for many languages or just tools in general, just plug in the right c
 #+RESULTS:
 : t
 
-*** anaconda-mode
+*** COMMENT anaconda-mode
 This is a mode for editing and running python. It actually is not dependent on having anaconda python specifically installed.
 #+BEGIN_SRC emacs-lisp
-  (use-package anaconda-mode
-    :ensure t
-    :config
-    (add-hook 'python-mode-hook 'anaconda-mode)
-    (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
+  (if (eq system-type 'gnu/linux)
+      (use-package anaconda-mode
+        :ensure t
+        :config
+        (add-hook 'python-mode-hook 'anaconda-mode)
+        (add-hook 'python-mode-hook 'anaconda-eldoc-mode)))
 #+END_SRC
 
 #+RESULTS:
-: t
 
+*** COMMENT company-anaconda
+This is a potential backend for `company` (autocompletion), but it once (09/2020) was very slow for me (on windows). 
 #+BEGIN_SRC emacs-lisp
   (use-package company-anaconda
     :ensure t
@@ -1461,6 +1506,20 @@ This is a mode for editing and running python. It actually is not dependent on h
     ;; (eval-after-load "company"
    ;; '(add-to-list 'company-backends '(company-anaconda :with company-capf)))
     )
+#+END_SRC
+
+#+RESULTS:
+: t
+
+*** COMMENT company-jedi
+Completion backend for company that uses jedi. Make sure jedi is actually installed in your python environment. It throws some error regarding epc. So make sure epc is installed in your python environment.
+#+BEGIN_SRC emacs-lisp
+  (use-package company-jedi
+    :ensure t
+    :init (add-to-list 'company-backends 'company-jedi)
+    :config
+      (setq jedi:complete-on-dot t)
+      (add-hook 'python-mode 'jedi:setup))
 #+END_SRC
 
 #+RESULTS:
@@ -1476,14 +1535,15 @@ This package manages a lot of things all around python development with emacs. I
     (elpy-enable)
 
     ;; switch out flymake for flycheck (less troubleshooting, real-time syntax checking)
-    (when (require 'flycheck nil t)
-      (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-      (add-hook 'elpy-mode-hook 'flycheck-mode))
+    ;; (when (require 'flycheck nil t)
+    ;;   (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+    ;;   (add-hook 'elpy-mode-hook 'flycheck-mode))
 
     (add-hook 'python-mode-hook 'elpy-mode)
-    (with-eval-after-load 'elpy
-      (remove-hook 'elpy-modules 'elpy-module-flymake)
-      (add-hook 'elpy-mode-hook 'flycheck-mode))
+    ;; (with-eval-after-load 'elpy
+    ;;   (remove-hook 'elpy-modules 'elpy-module-flymake)
+    ;;   (add-hook 'elpy-mode-hook 'flycheck-mode))
+
     ;; (add-hook 'elpy-mode-hook 'elpy-use-ipython)
     ;; (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
 
@@ -1516,23 +1576,27 @@ This package manages a lot of things all around python development with emacs. I
 After having installed it in emacs, run ~M-x elpy-config~ to access a GUI (yes, manual setup) which provides a point and click interface to install the packages elpy relies on. Additionally, it shows you information about the underlying RPC process and which python version it uses.
 
 *** [[https://github.com/jorgenschaefer/pyvenv][pyvenv]]
-This provides virtual environment support for python. If you want to activate a specific virtual environment
+This provides virtual environment support for python. If you want to activate a specific virtual environment in a project. 
 #+BEGIN_SRC emacs-lisp
-  (use-package pyvenv
-    :ensure t
-    :init
-    (with-system gnu/linux
-      (setenv "WORKON_HOME" (expand-file-name "~/anaconda3/envs")))
-    (with-system windows-nt
-      (setenv "WORKON_HOME" (expand-file-name "C:/Users/nanospin/AppData/Local/Continuum/anaconda3/envs"))
-    )
+    (use-package pyvenv
+      :ensure t
+      :config
 
-  ;; convention
-    (pyvenv-mode 1)
-    (pyvenv-tracking-mode 1))
+      (defun cs-init-pyvenv ()
+        (if (eq system-type 'gnu/linux)
+            (setenv "WORKON_HOME"
+                    (expand-file-name "~/anaconda3/envs"))
+          (if (eq system-type 'windows-nt)
+              (setenv "WORKON_HOME"
+                      (expand-file-name "C:/Users/nanospin/AppData/Local/Continuum/anaconda3/envs"))))
+        (pyvenv-mode 1)
+        (pyvenv-tracking-mode 1))
+
+      (add-hook 'python-mode-hook 'cs-init-pyvenv))
 #+END_SRC
 
 #+RESULTS:
+: t
 
 **** COMMENT setup for specific projects
 In a specific project, create the file ~.dir-locals.el~ and inside set the command
@@ -1561,13 +1625,14 @@ search in all file for a name, and then you can perform operations on these occu
 #+RESULTS:
 
 ** c/c++
-*** flycheck
+*** COMMENT flycheck
 #+BEGIN_SRC emacs-lisp
-(use-package flycheck
-:ensure t
-:config 
-(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
-(setq-default flycheck-emacs-lisp-load-path 'inherit))
+  (use-package flycheck
+    :ensure t
+    :config
+    (add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
+    (setq-default flycheck-emacs-lisp-load-path
+                  'inherit))
 #+END_SRC
 
 #+RESULTS:
@@ -1671,7 +1736,6 @@ search in all file for a name, and then you can perform operations on these occu
     ;; (getenv "PATH")
     )
 
-
     (defun python-execute-main-in-terminal()
       (interactive)
       ;; usually the popup-shell has name *ansi-term-1* where, 1 is the index
@@ -1685,7 +1749,7 @@ search in all file for a name, and then you can perform operations on these occu
 : python-execute-main-in-terminal
 
 ** elisp
-*** flycheck
+*** COMMENT flycheck
 Complains about unconventional style when writing emacs-lisp packages.
 #+BEGIN_SRC emacs-lisp
   (add-hook 'emacs-lisp-mode-hook #'flycheck-mode)
@@ -1845,10 +1909,13 @@ This tool is based on semantic. It doesn't really refactor, but it can e.g. refo
 
 ** COMMENT scimax
 #+BEGIN_SRC emacs-lisp
-(use-package scimax
-:ensure t
-:config)
+  (use-package scimax
+    :ensure t
+    :config)
 #+END_SRC
+
+#+RESULTS:
+: t
 
 * literature research packages
 ** pdfgrep

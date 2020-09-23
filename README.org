@@ -1,4 +1,25 @@
 * dotemacs
 Emacs configuration files + loose elisp packages.
-So far they only work reliably on Linux (Ubuntu). 
-TODO: make it work cross-platform (Windows 10 and Linux (Ubuntu)).  
+
+* todo list:   
+** TODO make most things work cross-platform (Windows 10 and Linux (Ubuntu)): 
+*** DONE done on windows
+*** TODO merge with current linux setup
+** TODO get auto-completion and jump-to-definition for python working on Windows. 
+I tried all kinds of combinations:
+- anaconda mode with pyvenv
+- elpy, pyvenv (not conda- or windows-aware, just knows virtual environments on linux)
+- ~jedi.el~ on it's own
+*** Problems:
+- There is no directly usable standard python system python pre-installed on windows 
+(you need to run it as administrator). 
+- Some parsing libraries may rely on a /standard/ python installation that is not the 
+one in the virtual environment, just to run it's basic commands (e.g. elpy uses an 
+rpc process and an extra virtual environment for the rpc-python and it's packages). 
+*** Workarounds: 
+- Within a project, use ~cs-helm-projectile-ag~ to search for definitions and jump to them. 
+  To find files recursively in a project, use ~helm-projectile-find-file-from-directory~. 
+- I am starting to think of building my own completion library (or company backend), 
+  based on jedi, all of this just to handle the paths correctly and to know what jedi 
+  is doing exactly. 
+
