@@ -1,0 +1,8 @@
+(message "hi from AppData/Roaming")
+
+;; different machines: different settings in dotemacs
+(setq machine-identifier 'virtualbox-windows10-on-ubuntu-laptop)
+(setq user-emacs-directory "c:/Users/IEUser/cmisc/dotemacs/.emacs.d/")
+
+(load "c:/Users/IEUser/cmisc/dotemacs/.emacs.d/init.el")
+;; replace the username and path, then copy this to ~/AppData/Roaming/.emacs
