@@ -65,7 +65,8 @@ If MONITOR is nil, use the current frame's monitor."
                                                          2.0
                                                        (if (eq system-type 'windows-nt)
                                                            3.0)))
-                                                 monitor-pixel-height)))))))
+                                                 monitor-pixel-height)))
+                               ))))
 
 
 (provide 'cs-frame-resize)

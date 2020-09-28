@@ -29,7 +29,6 @@
 ;; ------- set theme -----------
 
 (require 'doom-themes)
-
 (defun cs-set-style-emacs ()
   ""
   (interactive)
