@@ -1,5 +1,4 @@
 
-
 * Package-Initialize, repos, path
 ** COMMENT melpa and org repos
 This is done in ~.emacs~.
@@ -9,7 +8,6 @@ This is done in ~.emacs~.
   (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
   (package-initialize)
   (setq package-check-signature nil)
-  
 #+END_SRC
 
 #+RESULTS:
@@ -141,7 +139,7 @@ customize annoyng defaults
 Disable startup screen when opening a file from command line
 #+BEGIN_SRC emacs-lisp
 (defun my-inhibit-startup-screen-always ()
-  ;; Startup screen inhibitor for `command-line-functions`.
+  ;; Startup screen inhibitor for ~command-line-functions~.
   ;; Inhibits startup screen on the first unrecognised option.
   (ignore (setq inhibit-startup-screen t)))
 
@@ -203,7 +201,7 @@ Place auto-save files into seperate directory, away from the original files, to 
         (make-directory my-backup-folder))
 
     (setq backup-directory-alist (quote (("." . "~/.saves"))))
-    ;; (setq backup-directory-alist `(("." . ,my-backup-folder)))
+    ;; (setq backup-directory-alist ~(("." . ,my-backup-folder)))
     (setq backup-by-copying t))
 #+END_SRC
 
@@ -383,7 +381,7 @@ On Windows, this program doesn't exist. Some recursive searching counsel functio
     (ivy-mode 1)
     (setq ivy-use-virtual-buffers t)
     (setq enable-recursive-minibuffers t)
-    ;; enable this if you want `swiper' to use it
+    ;; enable this if you want ~swiper' to use it
     ;; (setq search-default-mode #'char-fold-to-regexp)
 
     (defun cs-swiper (&optional arg)
@@ -475,7 +473,7 @@ makes swiper use helm
   _m_: mark          _u_: unmark        _x_: execute       _R_: re-isearch
   _s_: save          _U_: unmark up     _b_: bury          _I_: isearch
   _d_: delete        ^ ^                _g_: refresh       _O_: multi-occur
-  _D_: delete up     ^ ^                _T_: files only: % -28`Buffer-menu-files-only
+  _D_: delete up     ^ ^                _T_: files only: % -28~Buffer-menu-files-only
   _~_: modified
   "
     ("m" Buffer-menu-mark)
@@ -558,7 +556,7 @@ my own tools for images in org-mode
                      ((and (bound-and-true-p machine-identifier)
                            (eq machine-identifier 'virtualbox-windows10-on-ubuntu-laptop)) "consolas-12")
                      (t (progn
-                          (message "`machine-identifier` does not set the font here!")
+                          (message "~machine-identifier~ does not set the font here!")
                           "consolas"))))
                    ((and (bound-and-true-p machine-identifier)
                          (eq machine-identifier 'ubuntu-laptop)) "mono-12")
@@ -1391,7 +1389,7 @@ implements folding for many modes
     :config
     (setq shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
     (setq shell-pop-term-shell "/bin/zsh")
-    ;; need to do this manually or not picked up by `shell-pop'
+    ;; need to do this manually or not picked up by ~shell-pop'
     (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type)
     (global-set-key (kbd "C-, t") 'shell-pop))
 #+END_SRC
@@ -1447,20 +1445,32 @@ Completion for many languages or just tools in general, just plug in the right c
 
 *** lsp-mode
 Language-Server-Protocol aims at getting you to 80% of what modern IDE's (for specific languages) can do (jump to definition, auto-completion, ...). You need an lsp-server for a specific language and an lsp-client (elisp softare here in emacs, to connect to the server). 
+
+Installation: 
+- under windows, I found that using ~use-package~ actually didn't install the packages (weirdly). So I installed them manually. Also, I was asked weather to install the python language server ~mspyls~ automatically. I confirmed and things worked right away. No need to install additional python packages. Basic completion within the project worked, outside of a virtual environment. 
+- under ubuntu, I installed the package https://pypi.org/project/python-language-server/ into my virual environment, and then it worked (while having ~pyvenv~ pointed to the project's conda virtual environment). 
+
 #+BEGIN_SRC emacs-lisp
-  (use-package lsp-mode
-    :ensure t
-    :hook (prog-mode . lsp)
-    :commands lsp
-    :config (setq lsp-log-io t))
+  (require 'lsp-mode)
+  (add-hook 'python-mode-hook 'lsp-mode)
+  (setq lsp-diagnostic-package :none)
 
-  (use-package lsp-ui
-    :ensure t
-    :commands lsp-ui-mode)
+  (require 'lsp-ui)
+  ;; (require 'company-lsp)
 
-  (use-package company-lsp
-    :ensure t
-    :commands company-lsp)
+  ;; (use-package lsp-mode
+  ;;   :ensure t
+  ;;   :hook (prog-mode . lsp)
+  ;;   :commands lsp
+  ;;   :config (setq lsp-log-io t))
+
+  ;; (use-package lsp-ui
+  ;;   :ensure t
+  ;;   :commands lsp-ui-mode)
+
+  ;; (use-package company-lsp
+  ;;   :ensure t
+  ;;   :commands company-lsp)
 
       ;; optionally
       ;; (use-package lsp-ui
@@ -1550,7 +1560,7 @@ Language-Server-Protocol aims at getting you to 80% of what modern IDE's (for sp
 #+RESULTS:
 : t
 
-*** anaconda-mode
+*** COMMENT anaconda-mode
 This is a mode for editing and running python. It actually is not dependent on having anaconda python specifically installed.
 #+BEGIN_SRC emacs-lisp
   (use-package anaconda-mode
@@ -1564,7 +1574,7 @@ This is a mode for editing and running python. It actually is not dependent on h
 : t
 
 *** COMMENT company-anaconda
-This is a potential backend for `company` (autocompletion), but it once (09/2020) was very slow for me (on windows). 
+This is a potential backend for ~company~ (autocompletion), but it once (09/2020) was very slow for me (on windows). 
 #+BEGIN_SRC emacs-lisp
   (use-package company-anaconda
     :ensure t
@@ -1643,7 +1653,7 @@ This package manages a lot of things all around python development with emacs. I
 **** setup
 After having installed it in emacs, run ~M-x elpy-config~ to access a GUI (yes, manual setup) which provides a point and click interface to install the packages elpy relies on. Additionally, it shows you information about the underlying RPC process and which python version it uses.
 
-*** COMMENT [[https://github.com/jorgenschaefer/pyvenv][pyvenv]]
+*** [[https://github.com/jorgenschaefer/pyvenv][pyvenv]]
 This provides virtual environment support for python. If you want to activate a specific virtual environment in a project. 
 #+BEGIN_SRC emacs-lisp
     (use-package pyvenv
@@ -1794,7 +1804,7 @@ search in all file for a name, and then you can perform operations on these occu
 #+BEGIN_SRC emacs-lisp
     ;; make sure that a python exists in the path, otherwise throw an error message
     ;; on windows, python is not by default in PATH. 
-    ;; usually, I like to install anaconda and add it's `base` environment python.exe to path
+    ;; usually, I like to install anaconda and add it's ~base~ environment python.exe to path
   (defun add-windows-python-to-path (&optional windows-python-path)
     "setting the python path on windows"
     (unless windows-python-path
@@ -1923,7 +1933,7 @@ This tool is based on semantic. It doesn't really refactor, but it can e.g. refo
     (add-hook 'minibuffer-setup-hook 'conditionally-enable-lispy)
 
     (eval-after-load "lispy"
-      `(progn
+      ~(progn
          ;; replace a global binding with own function
          (define-key lispy-mode-map (kbd "C-e") nil)
          ;; replace a global binding with major-mode's default
