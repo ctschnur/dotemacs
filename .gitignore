@@ -1,0 +1,2 @@
+.emacs.d/elisp/*
+!.emacs.d/elisp/in-dev

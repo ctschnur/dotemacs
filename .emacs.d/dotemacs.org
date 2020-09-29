@@ -1,3 +1,5 @@
+
+
 * Package-Initialize, repos, path
 ** COMMENT melpa and org repos
 This is done in ~.emacs~.
@@ -47,7 +49,7 @@ This is done in ~.emacs~ as well.
 
 This is the path for (yet) unstructured config code
 #+BEGIN_SRC emacs-lisp
- (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "fluid")))
+ (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "in-dev")))
 #+END_SRC
 
 * Package-Management
@@ -273,7 +275,7 @@ Does a lot of useful auto-completion stuff all over emacs, e.g. when finding fil
                             (if (eq system-type 'gnu/linux)
                                 "~/.fzf/bin")))
 
-  (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "fluid/helm-fzf")))
+  (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "in-dev/helm-fzf")))
   (require 'helm-fzf)
 #+END_SRC
 
@@ -343,7 +345,7 @@ function can be made to work.
 
 ** cs-helm-projectile-ag
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path (expand-file-name (concat user-emacs-directory "elisp/fluid/")))
+  (add-to-list 'load-path (expand-file-name (concat user-emacs-directory "elisp/in-dev/")))
   (require 'cs-helm-projectile-ag)
   (define-key prog-mode-map (kbd "C-, C-r") 'cs-helm-projectile-ag)
   ;; (define-key org-mode-map (kbd "C-, C-r") 'cs-helm-projectile-ag)
@@ -558,7 +560,8 @@ my own tools for images in org-mode
                      (t (progn
                           (message "`machine-identifier` does not set the font here!")
                           "consolas"))))
-                   ((eq system-type 'gnu/linux) "mono")
+                   ((and (bound-and-true-p machine-identifier)
+                         (eq machine-identifier 'ubuntu-laptop)) "mono-12")
                    (t nil))
                   t
                   t)
@@ -983,6 +986,7 @@ Some commands are re-defined so that they are (may be) more convenient (in certa
 
       ;; in programming modes, move to the beginning of the actual line
       (define-key prog-mode-map (kbd "C-a") #'crux-move-beginning-of-line)
+      (define-key org-mode-map (kbd "C-a") #'crux-move-beginning-of-line)
       (global-set-key (kbd "C-c d") #'crux-duplicate-current-line-or-region)))
 #+END_SRC
 
@@ -1398,19 +1402,20 @@ implements folding for many modes
 *** company
 Completion for many languages or just tools in general, just plug in the right completion front ends.
 #+BEGIN_SRC emacs-lisp
-(use-package company
-  :ensure t
-  :config
-  (add-hook 'after-init-hook 'global-company-mode)
-  (setq company-backends (delete 'company-semantic company-backends))
-  (define-key c-mode-map  [(tab)] 'company-complete)
-  (define-key c++-mode-map  [(tab)] 'company-complete)
-  (setq company-idle-delay 1)
-  ;; Weirdly, I didn't manually have to specify all my includes,
-  ;; maybe because projectile works with it?
-  ;; ((nil . ((company-clang-arguments . ("-I/home/<user>/project_root/include1/"
-                                       ;; "-I/home/<user>/project_root/include2/")))))
-)
+  (use-package company
+    :ensure t
+    :config
+    (add-hook 'after-init-hook 'global-company-mode)
+    (setq company-backends (delete 'company-semantic company-backends))
+    (define-key c-mode-map  [(tab)] 'company-complete)
+    (define-key c++-mode-map  [(tab)] 'company-complete)
+    ;; (define-key python-mode-map [(tab)] 'company-complete)
+    (setq company-idle-delay 1)
+    ;; Weirdly, I didn't manually have to specify all my includes,
+    ;; maybe because projectile works with it?
+    ;; ((nil . ((company-clang-arguments . ("-I/home/<user>/project_root/include1/"
+                                         ;; "-I/home/<user>/project_root/include2/")))))
+  )
 #+END_SRC
 
 #+RESULTS:
@@ -1439,6 +1444,60 @@ Completion for many languages or just tools in general, just plug in the right c
 
 #+RESULTS:
 : t
+
+*** lsp-mode
+Language-Server-Protocol aims at getting you to 80% of what modern IDE's (for specific languages) can do (jump to definition, auto-completion, ...). You need an lsp-server for a specific language and an lsp-client (elisp softare here in emacs, to connect to the server). 
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :ensure t
+    :hook (prog-mode . lsp)
+    :commands lsp
+    :config (setq lsp-log-io t))
+
+  (use-package lsp-ui
+    :ensure t
+    :commands lsp-ui-mode)
+
+  (use-package company-lsp
+    :ensure t
+    :commands company-lsp)
+
+      ;; optionally
+      ;; (use-package lsp-ui
+    ;;     :commands lsp-ui-mode
+    ;;     :config
+    ;;     ;; (setq lsp-ui-doc-enable nil)
+    ;;     ;; (setq lsp-ui-sideline-enable nil)
+    ;;     ;; (setq lsp-ui-imenu-enable t)
+
+    ;;     ;; Don't request doc after every command
+    ;;     ;; (add-hook 'lsp-ui-doc-mode-hook
+    ;;     ;;           (lambda ()
+    ;;     ;;             (when lsp-ui-doc-mode
+    ;;     ;;               (remove-hook 'post-command-hook #'lsp-ui-doc--make-request
+    ;;     ;;                            t))))
+    ;;     ;;(setq lsp-ui-sideline-show-hover nil)
+    ;; )
+      ;; if you are helm user
+      ;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
+
+      (define-key prog-mode-map (kbd "M-.") 'lsp-find-definition)
+#+END_SRC
+
+#+RESULTS:
+: lsp-find-definition
+**** python lsp server
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-python-ms
+  :ensure t
+  :init (setq lsp-python-ms-auto-install-server t)
+  :hook (python-mode . (lambda ()
+                          (require 'lsp-python-ms)
+                          (lsp))))  ; or lsp-deferred
+#+END_SRC
+
+#+RESULTS:
+| cs-init-pyvenv | (lambda nil (require (quote lsp-python-ms)) (lsp)) | lsp | origami-mode | (lambda nil (interactive) (define-key python-mode-map (kbd C-)) (quote sp-forward-slurp-sexp)) (define-key python-mode-map (kbd C-}) (quote sp-forward-barf-sexp)) (define-key python-mode-map (kbd <M-up>) (quote sp-splice-sexp-killing-backward))) | (lambda nil (define-key python-mode-map (kbd C-, b) (quote printbreakpoint))) |
 
 ** latex
 *** auctex
@@ -2017,9 +2076,6 @@ Make a minor mode with keys that override all other keys and always take precend
           (add-to-list 'load-path load-dir)
           (require 'cs-org-latex-preview))
         (message (concat "Warning: " load-dir " does not exist"))))
-
-
-
 #+END_SRC
 
 #+RESULTS:

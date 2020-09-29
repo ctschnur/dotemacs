@@ -1,7 +1,7 @@
 * dotemacs - my emacs configuration + unpolished elisp code
 ** Installation: 
 *** on windows
-The init file is first read from the location of the environment variable HOME (https://www.gnu.org/software/emacs/manual/html_node/efaq-w32/Location-of-init-file.html). 
+The init file is first read from the location of the environment variable ~HOME~ (https://www.gnu.org/software/emacs/manual/html_node/efaq-w32/Location-of-init-file.html). 
 Check the value of this environment variable using
 #+BEGIN_SRC shell
 echo %HOME%
@@ -13,6 +13,14 @@ If ~%HOME%~ doesn't exist, emacs looks in the ~AppData~ directory. There you can
 #+BEGIN_SRC shell
 cp .emacs_template_windows C:/Users/[username]/AppData/Roaming/.emacs
 #+END_SRC
+
+*** on ubuntu
+Emacs looks to find ~.emacs~ in ~$HOME~, so say ~echo $HOME~ to find where to put the ~.emacs_template~ file. 
+Do the same thing as for windows, just adjust the paths. 
+
+** Explanations: 
+The ~elisp~ directory should be used to hold clones of my own elisp packages (which are not yet on melpa, but [[https://github.com/ctschnur?tab=repositories&q=cs-&type=&language=][here]]), in addition to the ~in-dev~ folder, in which I develop ideas. 
+The ~.gitignore~ should ignore all subdirs in ~elisp/~, except ~in-dev~. 
 
 ** TODO List:   
 *** TODO get auto-completion and jump-to-definition for python working on Windows. 
