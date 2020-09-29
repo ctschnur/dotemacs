@@ -1340,7 +1340,7 @@ Bind some keys and some hooks
   :ensure t)
 #+END_SRC
 
-*** origami
+*** COMMENT origami
 implements folding for many modes
 #+BEGIN_SRC emacs-lisp
   (use-package origami
@@ -1480,7 +1480,7 @@ Completion for many languages or just tools in general, just plug in the right c
 : t
 
 ** python
-*** py-autopep8
+*** COMMENT py-autopep8
 #+BEGIN_SRC emacs-lisp
   (use-package py-autopep8
     :ensure t
@@ -1491,18 +1491,18 @@ Completion for many languages or just tools in general, just plug in the right c
 #+RESULTS:
 : t
 
-*** COMMENT anaconda-mode
+*** anaconda-mode
 This is a mode for editing and running python. It actually is not dependent on having anaconda python specifically installed.
 #+BEGIN_SRC emacs-lisp
-  (if (eq system-type 'gnu/linux)
-      (use-package anaconda-mode
-        :ensure t
-        :config
-        (add-hook 'python-mode-hook 'anaconda-mode)
-        (add-hook 'python-mode-hook 'anaconda-eldoc-mode)))
+  (use-package anaconda-mode
+    :ensure t
+    :config
+    (add-hook 'python-mode-hook 'anaconda-mode)
+    (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
 #+END_SRC
 
 #+RESULTS:
+: t
 
 *** COMMENT company-anaconda
 This is a potential backend for `company` (autocompletion), but it once (09/2020) was very slow for me (on windows). 
@@ -1584,7 +1584,7 @@ This package manages a lot of things all around python development with emacs. I
 **** setup
 After having installed it in emacs, run ~M-x elpy-config~ to access a GUI (yes, manual setup) which provides a point and click interface to install the packages elpy relies on. Additionally, it shows you information about the underlying RPC process and which python version it uses.
 
-*** [[https://github.com/jorgenschaefer/pyvenv][pyvenv]]
+*** COMMENT [[https://github.com/jorgenschaefer/pyvenv][pyvenv]]
 This provides virtual environment support for python. If you want to activate a specific virtual environment in a project. 
 #+BEGIN_SRC emacs-lisp
     (use-package pyvenv
