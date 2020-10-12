@@ -1447,8 +1447,9 @@ Completion for many languages or just tools in general, just plug in the right c
 Language-Server-Protocol aims at getting you to 80% of what modern IDE's (for specific languages) can do (jump to definition, auto-completion, ...). You need an lsp-server for a specific language and an lsp-client (elisp softare here in emacs, to connect to the server). 
 
 Installation: 
-- under windows, I found that using ~use-package~ actually didn't install the packages (weirdly). So I installed them manually. Also, I was asked weather to install the python language server ~mspyls~ automatically. I confirmed and things worked right away. No need to install additional python packages. Basic completion within the project worked, outside of a virtual environment. 
-- under ubuntu, I installed the package https://pypi.org/project/python-language-server/ into my virual environment, and then it worked (while having ~pyvenv~ pointed to the project's conda virtual environment). 
+- *Windows*: I found that using ~use-package~ actually didn't install the packages (weirdly). So I installed them manually. Also, I was asked whether to install the python language server ~mspyls~ automatically (call ~lsp-describe-session~ to see which language server is activated). If not asked, install ~mspyls~ manually (in my experience the server ~mspyls~ worked better than ~pyls~) by calling ~lsp-python-ms-update-server~. 
+  I confirmed and things worked right away. No need to install additional python packages. Basic completion within the project worked, outside of a virtual environment. Inside a virtual environment, when I had one activated (with ~pyvenv~), it even managed to correctly jump to definition for python modules installed into the environment in editable mode (which is what I want for more control) and for those not installed in editable mode, it jumped to the correct package (in the correct environment) when selecting ~n (do nothing)~ when jumping to definition. 
+- *Ubuntu*, I installed the package https://pypi.org/project/python-language-server/ into my virual environment and then it worked (while having ~pyvenv~ pointed to the project's conda virtual environment). 
 
 #+BEGIN_SRC emacs-lisp
   (require 'lsp-mode)
@@ -1507,7 +1508,7 @@ Installation:
 #+END_SRC
 
 #+RESULTS:
-| cs-init-pyvenv | (lambda nil (require (quote lsp-python-ms)) (lsp)) | lsp | origami-mode | (lambda nil (interactive) (define-key python-mode-map (kbd C-)) (quote sp-forward-slurp-sexp)) (define-key python-mode-map (kbd C-}) (quote sp-forward-barf-sexp)) (define-key python-mode-map (kbd <M-up>) (quote sp-splice-sexp-killing-backward))) | (lambda nil (define-key python-mode-map (kbd C-, b) (quote printbreakpoint))) |
+| cs-init-pyvenv | dumb-jump-mode | (lambda nil (require 'lsp-python-ms) (lsp)) | lsp-mode | (lambda nil (interactive) (define-key python-mode-map (kbd C-)) 'sp-forward-slurp-sexp) (define-key python-mode-map (kbd C-}) 'sp-forward-barf-sexp) (define-key python-mode-map (kbd <M-up>) 'sp-splice-sexp-killing-backward)) | (lambda nil (define-key python-mode-map (kbd C-, b) 'printbreakpoint)) |
 
 ** latex
 *** auctex
