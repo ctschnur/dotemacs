@@ -504,8 +504,15 @@ makes swiper use helm
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :ensure t
-    :config)
+    :config
+    (setq magit-repository-directories `((,cs-elisp-config-base-dir . 3)
+                                         (,cs-misc-programs-directory . 3)))
+    (global-set-key (kbd "C-, m l r") 'magit-list-repositories))
 #+END_SRC
+
+#+RESULTS:
+: t
+
 ** winner
 #+BEGIN_SRC emacs-lisp
 (use-package winner
@@ -548,26 +555,6 @@ my own tools for images in org-mode
 #+END_SRC
 
 ** style packages
-*** font 
-#+BEGIN_SRC emacs-lisp
-  (set-frame-font (cond
-                   ((eq system-type 'windows-nt)
-                    (cond
-                     ((and (bound-and-true-p machine-identifier)
-                           (eq machine-identifier 'virtualbox-windows10-on-ubuntu-laptop)) "consolas-12")
-                     (t (progn
-                          (message "~machine-identifier~ does not set the font here!")
-                          "consolas"))))
-                   ((and (bound-and-true-p machine-identifier)
-                         (eq machine-identifier 'ubuntu-laptop)) "mono-12")
-                   (t nil))
-                  t
-                  t)
-#+END_SRC
-
-#+RESULTS:
-
-
 *** hide-mode-line
 #+BEGIN_SRC emacs-lisp
 (use-package hide-mode-line
