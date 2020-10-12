@@ -1103,10 +1103,11 @@ Provide multiple cursors
 | visual-line-mode | (lambda nil (interactive) (setq show-trailing-whitespace 1)) |
 
 ** python
+- *Windows:* If no ~python~ command is in the path, the error ~comint-send-string: Process Python Internal[[any-file.py]]~ may appear when trying to open any python file ~any-file.py~. Probably, ~python-mode~ wants to initialize some things and fails to do it without being able to call python. To fix this, install an independent python on your system (from the official source at https://www.python.org/downloads/windows), in a version that is stable enough (not necessarily the newest). When calling ~where python.exe~ from a plain ~cmd.exe~ (not an anaconda prompt), the installation path should be the first that appears (after having added it to ~PATH~). 
+
 #+BEGIN_SRC emacs-lisp
   (defun printbreakpoint ()
     (interactive)
-
     (cond
      ((eq system-type 'windows-nt)
       (insert "import pdb; pdb.set_trace()  # noqa BREAKPOINT"))
@@ -1120,7 +1121,7 @@ Provide multiple cursors
 #+END_SRC
 
 #+RESULTS:
-| anaconda-eldoc-mode | anaconda-mode | origami-mode | (lambda nil (interactive) (define-key python-mode-map (kbd C-)) 'sp-forward-slurp-sexp) (define-key python-mode-map (kbd C-}) 'sp-forward-barf-sexp) (define-key python-mode-map (kbd <M-up>) 'sp-splice-sexp-killing-backward)) | (lambda nil (define-key python-mode-map (kbd C-, b) 'printbreakpoint)) |
+| cs-init-pyvenv | dumb-jump-mode | (lambda nil (require 'lsp-python-ms) (lsp)) | lsp-mode | (lambda nil (interactive) (define-key python-mode-map (kbd C-)) 'sp-forward-slurp-sexp) (define-key python-mode-map (kbd C-}) 'sp-forward-barf-sexp) (define-key python-mode-map (kbd <M-up>) 'sp-splice-sexp-killing-backward)) | (lambda nil (define-key python-mode-map (kbd C-, b) 'printbreakpoint)) |
 
 ** latex
 #+BEGIN_SRC emacs-lisp
