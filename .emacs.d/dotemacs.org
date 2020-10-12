@@ -8,7 +8,6 @@ This is done in ~.emacs~.
   (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
   (package-initialize)
   (setq package-check-signature nil)
-  
 #+END_SRC
 
 #+RESULTS:
@@ -48,7 +47,7 @@ This is done in ~.emacs~ as well.
 
 This is the path for (yet) unstructured config code
 #+BEGIN_SRC emacs-lisp
- (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "fluid")))
+ (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "in-dev")))
 #+END_SRC
 
 * Package-Management
@@ -140,7 +139,7 @@ customize annoyng defaults
 Disable startup screen when opening a file from command line
 #+BEGIN_SRC emacs-lisp
 (defun my-inhibit-startup-screen-always ()
-  ;; Startup screen inhibitor for `command-line-functions`.
+  ;; Startup screen inhibitor for ~command-line-functions~.
   ;; Inhibits startup screen on the first unrecognised option.
   (ignore (setq inhibit-startup-screen t)))
 
@@ -202,7 +201,7 @@ Place auto-save files into seperate directory, away from the original files, to 
         (make-directory my-backup-folder))
 
     (setq backup-directory-alist (quote (("." . "~/.saves"))))
-    ;; (setq backup-directory-alist `(("." . ,my-backup-folder)))
+    ;; (setq backup-directory-alist ~(("." . ,my-backup-folder)))
     (setq backup-by-copying t))
 #+END_SRC
 
@@ -266,7 +265,7 @@ Does a lot of useful auto-completion stuff all over emacs, e.g. when finding fil
   (global-set-key (kbd "C-2") 'helm-mini))
 #+END_SRC
 
-** helm-fzf
+** COMMENT helm-fzf
 #+BEGIN_SRC emacs-lisp
 ; Make sure that fzf is installed and in your path. 
 (add-to-list 'exec-path (if (eq system-type 'windows-nt)
@@ -274,7 +273,7 @@ Does a lot of useful auto-completion stuff all over emacs, e.g. when finding fil
                             (if (eq system-type 'gnu/linux)
                                 "~/.fzf/bin")))
 
-  (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "fluid/helm-fzf")))
+  (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "in-dev/helm-fzf")))
   (require 'helm-fzf)
 #+END_SRC
 
@@ -344,7 +343,7 @@ function can be made to work.
 
 ** cs-helm-projectile-ag
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path (expand-file-name (concat user-emacs-directory "elisp/fluid/")))
+  (add-to-list 'load-path (expand-file-name (concat user-emacs-directory "elisp/in-dev/")))
   (require 'cs-helm-projectile-ag)
   (define-key prog-mode-map (kbd "C-, C-r") 'cs-helm-projectile-ag)
   ;; (define-key org-mode-map (kbd "C-, C-r") 'cs-helm-projectile-ag)
@@ -382,7 +381,7 @@ On Windows, this program doesn't exist. Some recursive searching counsel functio
     (ivy-mode 1)
     (setq ivy-use-virtual-buffers t)
     (setq enable-recursive-minibuffers t)
-    ;; enable this if you want `swiper' to use it
+    ;; enable this if you want ~swiper' to use it
     ;; (setq search-default-mode #'char-fold-to-regexp)
 
     (defun cs-swiper (&optional arg)
@@ -474,7 +473,7 @@ makes swiper use helm
   _m_: mark          _u_: unmark        _x_: execute       _R_: re-isearch
   _s_: save          _U_: unmark up     _b_: bury          _I_: isearch
   _d_: delete        ^ ^                _g_: refresh       _O_: multi-occur
-  _D_: delete up     ^ ^                _T_: files only: % -28`Buffer-menu-files-only
+  _D_: delete up     ^ ^                _T_: files only: % -28~Buffer-menu-files-only
   _~_: modified
   "
     ("m" Buffer-menu-mark)
@@ -551,13 +550,19 @@ my own tools for images in org-mode
 ** style packages
 *** font 
 #+BEGIN_SRC emacs-lisp
-(setq my-prefered-font
-      (cond ((eq system-type 'windows-nt) "consolas")
-            ((eq system-type 'gnu/linux) "mono")
-            (t nil)))
-
-(when my-prefered-font
-  (set-frame-font my-prefered-font nil t))
+  (set-frame-font (cond
+                   ((eq system-type 'windows-nt)
+                    (cond
+                     ((and (bound-and-true-p machine-identifier)
+                           (eq machine-identifier 'virtualbox-windows10-on-ubuntu-laptop)) "consolas-12")
+                     (t (progn
+                          (message "~machine-identifier~ does not set the font here!")
+                          "consolas"))))
+                   ((and (bound-and-true-p machine-identifier)
+                         (eq machine-identifier 'ubuntu-laptop)) "mono-12")
+                   (t nil))
+                  t
+                  t)
 #+END_SRC
 
 #+RESULTS:
@@ -603,8 +608,13 @@ Awesome looking modern themes.
 #+BEGIN_SRC emacs-lisp
   (use-package doom-themes
     :ensure t
-    :config)
+    :config
+    )
 #+END_SRC
+
+#+RESULTS:
+: t
+
 *** all-the-icons
 Provides icons for various themes, also for doom-modeline
 #+BEGIN_SRC emacs-lisp
@@ -791,7 +801,7 @@ Modal editing, more emacs-like than evil mode.
 | use-package | Cannot load org-pdfview                                              | :error | nil |
 | use-package | Failed to install org-pdfview: Package ‘org-pdfview-’ is unavailable | :error | nil |
 
-** org-ref
+** COMMENT org-ref
 #+BEGIN_SRC emacs-lisp
 (use-package org-ref
   :after org)
@@ -974,6 +984,7 @@ Some commands are re-defined so that they are (may be) more convenient (in certa
 
       ;; in programming modes, move to the beginning of the actual line
       (define-key prog-mode-map (kbd "C-a") #'crux-move-beginning-of-line)
+      (define-key org-mode-map (kbd "C-a") #'crux-move-beginning-of-line)
       (global-set-key (kbd "C-c d") #'crux-duplicate-current-line-or-region)))
 #+END_SRC
 
@@ -1331,7 +1342,7 @@ Bind some keys and some hooks
   :ensure t)
 #+END_SRC
 
-*** origami
+*** COMMENT origami
 implements folding for many modes
 #+BEGIN_SRC emacs-lisp
   (use-package origami
@@ -1378,7 +1389,7 @@ implements folding for many modes
     :config
     (setq shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
     (setq shell-pop-term-shell "/bin/zsh")
-    ;; need to do this manually or not picked up by `shell-pop'
+    ;; need to do this manually or not picked up by ~shell-pop'
     (shell-pop--set-shell-type 'shell-pop-shell-type shell-pop-shell-type)
     (global-set-key (kbd "C-, t") 'shell-pop))
 #+END_SRC
@@ -1389,19 +1400,20 @@ implements folding for many modes
 *** company
 Completion for many languages or just tools in general, just plug in the right completion front ends.
 #+BEGIN_SRC emacs-lisp
-(use-package company
-  :ensure t
-  :config
-  (add-hook 'after-init-hook 'global-company-mode)
-  (setq company-backends (delete 'company-semantic company-backends))
-  (define-key c-mode-map  [(tab)] 'company-complete)
-  (define-key c++-mode-map  [(tab)] 'company-complete)
-  (setq company-idle-delay 1)
-  ;; Weirdly, I didn't manually have to specify all my includes,
-  ;; maybe because projectile works with it?
-  ;; ((nil . ((company-clang-arguments . ("-I/home/<user>/project_root/include1/"
-                                       ;; "-I/home/<user>/project_root/include2/")))))
-)
+  (use-package company
+    :ensure t
+    :config
+    (add-hook 'after-init-hook 'global-company-mode)
+    (setq company-backends (delete 'company-semantic company-backends))
+    (define-key c-mode-map  [(tab)] 'company-complete)
+    (define-key c++-mode-map  [(tab)] 'company-complete)
+    ;; (define-key python-mode-map [(tab)] 'company-complete)
+    (setq company-idle-delay 1)
+    ;; Weirdly, I didn't manually have to specify all my includes,
+    ;; maybe because projectile works with it?
+    ;; ((nil . ((company-clang-arguments . ("-I/home/<user>/project_root/include1/"
+                                         ;; "-I/home/<user>/project_root/include2/")))))
+  )
 #+END_SRC
 
 #+RESULTS:
@@ -1430,6 +1442,72 @@ Completion for many languages or just tools in general, just plug in the right c
 
 #+RESULTS:
 : t
+
+*** lsp-mode
+Language-Server-Protocol aims at getting you to 80% of what modern IDE's (for specific languages) can do (jump to definition, auto-completion, ...). You need an lsp-server for a specific language and an lsp-client (elisp softare here in emacs, to connect to the server). 
+
+Installation: 
+- under windows, I found that using ~use-package~ actually didn't install the packages (weirdly). So I installed them manually. Also, I was asked weather to install the python language server ~mspyls~ automatically. I confirmed and things worked right away. No need to install additional python packages. Basic completion within the project worked, outside of a virtual environment. 
+- under ubuntu, I installed the package https://pypi.org/project/python-language-server/ into my virual environment, and then it worked (while having ~pyvenv~ pointed to the project's conda virtual environment). 
+
+#+BEGIN_SRC emacs-lisp
+  (require 'lsp-mode)
+  (add-hook 'python-mode-hook 'lsp-mode)
+  (setq lsp-diagnostic-package :none)
+
+  (require 'lsp-ui)
+  ;; (require 'company-lsp)
+
+  ;; (use-package lsp-mode
+  ;;   :ensure t
+  ;;   :hook (prog-mode . lsp)
+  ;;   :commands lsp
+  ;;   :config (setq lsp-log-io t))
+
+  ;; (use-package lsp-ui
+  ;;   :ensure t
+  ;;   :commands lsp-ui-mode)
+
+  ;; (use-package company-lsp
+  ;;   :ensure t
+  ;;   :commands company-lsp)
+
+      ;; optionally
+      ;; (use-package lsp-ui
+    ;;     :commands lsp-ui-mode
+    ;;     :config
+    ;;     ;; (setq lsp-ui-doc-enable nil)
+    ;;     ;; (setq lsp-ui-sideline-enable nil)
+    ;;     ;; (setq lsp-ui-imenu-enable t)
+
+    ;;     ;; Don't request doc after every command
+    ;;     ;; (add-hook 'lsp-ui-doc-mode-hook
+    ;;     ;;           (lambda ()
+    ;;     ;;             (when lsp-ui-doc-mode
+    ;;     ;;               (remove-hook 'post-command-hook #'lsp-ui-doc--make-request
+    ;;     ;;                            t))))
+    ;;     ;;(setq lsp-ui-sideline-show-hover nil)
+    ;; )
+      ;; if you are helm user
+      ;; (use-package helm-lsp :commands helm-lsp-workspace-symbol)
+
+      (define-key prog-mode-map (kbd "M-.") 'lsp-find-definition)
+#+END_SRC
+
+#+RESULTS:
+: lsp-find-definition
+**** python lsp server
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-python-ms
+  :ensure t
+  :init (setq lsp-python-ms-auto-install-server t)
+  :hook (python-mode . (lambda ()
+                          (require 'lsp-python-ms)
+                          (lsp))))  ; or lsp-deferred
+#+END_SRC
+
+#+RESULTS:
+| cs-init-pyvenv | (lambda nil (require (quote lsp-python-ms)) (lsp)) | lsp | origami-mode | (lambda nil (interactive) (define-key python-mode-map (kbd C-)) (quote sp-forward-slurp-sexp)) (define-key python-mode-map (kbd C-}) (quote sp-forward-barf-sexp)) (define-key python-mode-map (kbd <M-up>) (quote sp-splice-sexp-killing-backward))) | (lambda nil (define-key python-mode-map (kbd C-, b) (quote printbreakpoint))) |
 
 ** latex
 *** auctex
@@ -1471,7 +1549,7 @@ Completion for many languages or just tools in general, just plug in the right c
 : t
 
 ** python
-*** py-autopep8
+*** COMMENT py-autopep8
 #+BEGIN_SRC emacs-lisp
   (use-package py-autopep8
     :ensure t
@@ -1485,18 +1563,18 @@ Completion for many languages or just tools in general, just plug in the right c
 *** COMMENT anaconda-mode
 This is a mode for editing and running python. It actually is not dependent on having anaconda python specifically installed.
 #+BEGIN_SRC emacs-lisp
-  (if (eq system-type 'gnu/linux)
-      (use-package anaconda-mode
-        :ensure t
-        :config
-        (add-hook 'python-mode-hook 'anaconda-mode)
-        (add-hook 'python-mode-hook 'anaconda-eldoc-mode)))
+  (use-package anaconda-mode
+    :ensure t
+    :config
+    (add-hook 'python-mode-hook 'anaconda-mode)
+    (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
 #+END_SRC
 
 #+RESULTS:
+: t
 
 *** COMMENT company-anaconda
-This is a potential backend for `company` (autocompletion), but it once (09/2020) was very slow for me (on windows). 
+This is a potential backend for ~company~ (autocompletion), but it once (09/2020) was very slow for me (on windows). 
 #+BEGIN_SRC emacs-lisp
   (use-package company-anaconda
     :ensure t
@@ -1726,7 +1804,7 @@ search in all file for a name, and then you can perform operations on these occu
 #+BEGIN_SRC emacs-lisp
     ;; make sure that a python exists in the path, otherwise throw an error message
     ;; on windows, python is not by default in PATH. 
-    ;; usually, I like to install anaconda and add it's `base` environment python.exe to path
+    ;; usually, I like to install anaconda and add it's ~base~ environment python.exe to path
   (defun add-windows-python-to-path (&optional windows-python-path)
     "setting the python path on windows"
     (unless windows-python-path
@@ -1855,7 +1933,7 @@ This tool is based on semantic. It doesn't really refactor, but it can e.g. refo
     (add-hook 'minibuffer-setup-hook 'conditionally-enable-lispy)
 
     (eval-after-load "lispy"
-      `(progn
+      ~(progn
          ;; replace a global binding with own function
          (define-key lispy-mode-map (kbd "C-e") nil)
          ;; replace a global binding with major-mode's default
@@ -1918,7 +1996,7 @@ This tool is based on semantic. It doesn't really refactor, but it can e.g. refo
 : t
 
 * literature research packages
-** pdfgrep
+** COMMENT pdfgrep
 #+BEGIN_SRC emacs-lisp
   (use-package pdfgrep
     :ensure t
@@ -1938,8 +2016,13 @@ This tool is based on semantic. It doesn't really refactor, but it can e.g. refo
 ** cs-org-transfer
 Enables transferring (or copying) an org file with it's linked assets to anoter directory (1st level links) and if needed pulls the links into a dedicated assets folder (+renames the links to point to the new locations).
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "cs-org-transfer")))
-  (require 'cs-org-transfer)
+  (let* ((load-dir (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir)
+                                                   "cs-org-transfer"))))
+    (if (file-directory-p load-dir)
+      (progn
+        (add-to-list 'load-path load-dir)
+        (require 'cs-org-transfer))
+      (message (concat "Warning: " load-dir " does not exist"))))
 #+END_SRC
 
 #+RESULTS:
@@ -1948,26 +2031,34 @@ Enables transferring (or copying) an org file with it's linked assets to anoter 
 ** cs-static-blog
 Publishing a github pages blog directly from org-mode notes
 #+BEGIN_SRC emacs-lisp
-  (with-system gnu/linux
-    (add-to-list 'load-path (concat (expand-file-name cs-elisp-config-base-dir) "cs-static-blog"))
-    (require 'cs-org-blog-html-backend)
-    (require 'cs-org-publish)
-    (require 'cs-org-publish-utils))
+  (if (eq system-type 'gnu/linux)
+      (let* ((load-dir (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir)
+                                                       "cs-static-blog"))))
+        (if (file-directory-p load-dir)
+            (progn
+              (add-to-list 'load-path load-dir)
+              (require 'cs-org-blog-html-backend)
+              (require 'cs-org-publish)
+              (require 'cs-org-publish-utils))
+          (message (concat "Warning: " load-dir " does not exist")))))
 #+END_SRC
 
 #+RESULTS:
-: cs-org-publish-utils
 
 ** cs-org-drill
 My org-drill installation
 #+BEGIN_SRC emacs-lisp
-  (with-system gnu/linux
-    (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "cs-org-drill")))
-    (require 'cs-org-drill))
+  (if (eq system-type 'gnu/linux)
+      (let* ((load-dir (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir)
+                                                       "cs-org-drill"))))
+        (if (file-directory-p load-dir)
+            (progn
+              (add-to-list 'load-path load-dir)
+              (require 'cs-org-drill))
+          (message (concat "Warning: " load-dir " does not exist")))))
 #+END_SRC
 
 #+RESULTS:
-: cs-org-drill
 
 ** cs-style
 #+BEGIN_SRC emacs-lisp
@@ -1975,21 +2066,6 @@ My org-drill installation
   (require 'cs-style)
   (add-hook 'after-init-hook 'cs-set-style-emacs)
 #+END_SRC
-
-** cs-frame-resize
-#+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path (expand-file-name cs-elisp-config-base-dir))
-  (require 'cs-frame-resize)
-
-  ;; (menu-bar-mode -1)
-  (when (display-graphic-p)
-    (setq frame-resize-pixelwise t)
-    ;; (set-frame-position (selected-frame) 0 0)
-    ;; (set-frame-size (selected-frame) 905 600 t))
-    (make-frame-almost-fit-desktop))
-#+END_SRC
-
-#+RESULTS:
 
 ** cs-priority-keys
 Make a minor mode with keys that override all other keys and always take precendence.
@@ -2003,8 +2079,13 @@ Make a minor mode with keys that override all other keys and always take precend
 
 ** cs-org-latex-preview
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "cs-org-latex-preview")))
-  (require 'cs-org-latex-preview)
+  (let* ((load-dir (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir)
+                                                     "cs-org-latex-preview"))))
+      (if (file-directory-p load-dir)
+        (progn
+          (add-to-list 'load-path load-dir)
+          (require 'cs-org-latex-preview))
+        (message (concat "Warning: " load-dir " does not exist"))))
 #+END_SRC
 
 #+RESULTS:
@@ -2027,8 +2108,13 @@ editing mode for asymptote
 ** cs-crux
 My own ridiculously useful functions
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "cs-crux")))
-  (require 'cs-crux)
+  (let* ((load-dir (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir)
+                                                     "cs-crux"))))
+      (if (file-directory-p load-dir)
+        (progn
+          (add-to-list 'load-path load-dir)
+          (require 'cs-crux))
+        (message (concat "Warning: " load-dir " does not exist"))))
 #+END_SRC
 
 #+RESULTS:
@@ -2037,19 +2123,24 @@ My own ridiculously useful functions
 ** jupyters-manager
 Managing jupyter sessions, opening ~.ipynb~ files from within emacs
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "jupyters-manager")))
-  (require 'jupyters-manager)
+  (let* ((load-dir (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir)
+                                                   "jupyters-manager"))))
+    (if (file-directory-p load-dir)
+        (progn
+          (add-to-list 'load-path load-dir)
+          (require 'jupyters-manager))
+      (message (concat "Warning: " load-dir " does not exist"))))
 #+END_SRC
 
 #+RESULTS:
-: jupyters-manager
-
+: Warning: c:/Users/IEUser/cmisc/dotemacs/.emacs.d/elisp/jupyters-manager/ does not exist
 
 ** COMMENT random strings
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path (expand-file-name cs-elisp-config-base-dir))
   (require 'cs-random-string)
 #+END_SRC
+
 ** COMMENT delete whitespace
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path (concat (expand-file-name cs-elisp-config-base-dir) "xah/"))
@@ -2061,10 +2152,29 @@ Managing jupyter sessions, opening ~.ipynb~ files from within emacs
 
 ** cs-python-tmux-debugger
 #+BEGIN_SRC emacs-lisp
-  (with-system gnu/linux
-    (add-to-list 'load-path (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir) "python-tmux-debugger")))
-    (require 'python-tmux-debugger))
+  (if (eq system-type 'gnu/linux)
+      (let* ((load-dir (file-name-as-directory (concat (expand-file-name cs-elisp-config-base-dir)
+                                                       "python-tmux-debugger"))))
+        (if (file-directory-p load-dir)
+            (progn
+              (add-to-list 'load-path load-dir)
+              (require 'python-tmux-debugger))
+          (message (concat "Warning: " load-dir " does not exist")))))
 #+END_SRC
 
 #+RESULTS:
-: cs-python-tmux-debugger
+** cs-frame-resize
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path (expand-file-name cs-elisp-config-base-dir))
+  (require 'cs-frame-resize)
+
+  ;; (menu-bar-mode -1)
+
+  (when (display-graphic-p)
+    (setq frame-resize-pixelwise t)
+    ;; (set-frame-position (selected-frame) 0 0)
+    ;; (set-frame-size (selected-frame) 905 600 t))
+    (make-frame-almost-fit-desktop))
+#+END_SRC
+
+#+RESULTS:
