@@ -1103,6 +1103,9 @@ Provide multiple cursors
 | visual-line-mode | (lambda nil (interactive) (setq show-trailing-whitespace 1)) |
 
 ** python
+Remarks on ~python-mode~ and installation on windows: 
+- Windows doesn't come with a system python. But ~python-mode~ tries to get the system-python executable. This doesn't work on Windows, if no ~python.exe~ is in the PATH, which results in an error and needing two attempts to actually open the ~.py~ file. One way to fix this is to install a pure [[https://www.python.org/downloads/windows/][python]] and add the link to PATH. On top of this standard python, I also usually install anaconda, for data-processing and virtual environment needs. 
+
 #+BEGIN_SRC emacs-lisp
   (defun printbreakpoint ()
     (interactive)
@@ -1450,6 +1453,9 @@ Installation:
 - under windows, I found that using ~use-package~ actually didn't install the packages (weirdly). So I installed them manually. Also, I was asked weather to install the python language server ~mspyls~ automatically. I confirmed and things worked right away. No need to install additional python packages. Basic completion within the project worked, outside of a virtual environment. 
 - under ubuntu, I installed the package https://pypi.org/project/python-language-server/ into my virual environment, and then it worked (while having ~pyvenv~ pointed to the project's conda virtual environment). 
 
+Notes: 
+- If a class doesn't have a docstring, the preview of the documentation will sometimes not work! Make sure to follow good code rules, then everything should work!
+
 #+BEGIN_SRC emacs-lisp
   (require 'lsp-mode)
   (add-hook 'python-mode-hook 'lsp-mode)
@@ -1654,7 +1660,7 @@ This package manages a lot of things all around python development with emacs. I
 After having installed it in emacs, run ~M-x elpy-config~ to access a GUI (yes, manual setup) which provides a point and click interface to install the packages elpy relies on. Additionally, it shows you information about the underlying RPC process and which python version it uses.
 
 *** [[https://github.com/jorgenschaefer/pyvenv][pyvenv]]
-This provides virtual environment support for python. If you want to activate a specific virtual environment in a project. 
+This provides virtual environment support for python. If you want to activate a specific virtual environment in a project.
 #+BEGIN_SRC emacs-lisp
     (use-package pyvenv
       :ensure t
