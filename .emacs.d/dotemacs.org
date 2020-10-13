@@ -555,6 +555,21 @@ my own tools for images in org-mode
 #+END_SRC
 
 ** style packages
+*** font 
+#+BEGIN_SRC emacs-lisp
+  (set-frame-font (cond
+                   ((eq system-type 'windows-nt)
+                    (cond
+                     ((and (bound-and-true-p machine-identifier)
+                           (eq machine-identifier 'virtualbox-windows10-on-ubuntu-laptop)) "consolas-12")
+                     (t (progn
+                          (message "~machine-identifier~ does not set the font here!")
+                          "consolas"))))
+                   ((and (bound-and-true-p machine-identifier)
+                         (eq machine-identifier 'ubuntu-laptop)) "mono-12")
+                   (t nil))
+                  t
+                  t)
 *** hide-mode-line
 #+BEGIN_SRC emacs-lisp
 (use-package hide-mode-line
