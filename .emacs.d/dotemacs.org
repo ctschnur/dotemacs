@@ -105,14 +105,14 @@ This is the path for (yet) unstructured config code
 : t
 
 * general emacs behaviour
-start the emacs serve at startup of an emacs instance
+start the emacs server at startup of an emacs instance
 #+BEGIN_SRC emacs-lisp
 (server-start)
 #+END_SRC
 
 #+RESULTS:
 
-customize annoyng defaults
+customize annoying defaults
 #+BEGIN_SRC emacs-lisp
 (setq ring-bell-function 'ignore)
 (global-auto-revert-mode 1)
@@ -561,7 +561,8 @@ my own tools for images in org-mode
                    ((eq system-type 'windows-nt)
                     (cond
                      ((and (bound-and-true-p machine-identifier)
-                           (eq machine-identifier 'virtualbox-windows10-on-ubuntu-laptop)) "consolas-12")
+                           (or (eq machine-identifier 'virtualbox-windows10-on-ubuntu-laptop)
+                               (eq machine-identifier 'windows10-data-taking-computer))) "consolas-12")
                      (t (progn
                           (message "~machine-identifier~ does not set the font here!")
                           "consolas"))))
@@ -570,28 +571,34 @@ my own tools for images in org-mode
                    (t nil))
                   t
                   t)
+#+END_SRC
+
+#+RESULTS:
+
 *** hide-mode-line
 #+BEGIN_SRC emacs-lisp
 (use-package hide-mode-line
   :ensure t)
 #+END_SRC
 
+#+RESULTS:
+
 *** darkroom
 #+BEGIN_SRC emacs-lisp
-(use-package darkroom
-  :ensure t
-  :config
-  (setq darkroom-text-scale-increase 0)
-  (add-hook 'darkroom-mode-hook 'visual-line-mode)
-  (add-hook 'darkroom-mode-hook (lambda () (scroll-bar-mode 0)))
-  (add-hook 'darkroom-mode-hook (lambda () (tool-bar-mode 0)))
-  (add-hook 'darkroom-mode-hook (lambda () (menu-bar-mode 0)))
+  (use-package darkroom
+    :ensure t
+    :config
+    (setq darkroom-text-scale-increase 0)
+    (add-hook 'darkroom-mode-hook 'visual-line-mode)
+    (add-hook 'darkroom-mode-hook (lambda () (scroll-bar-mode 0)))
+    (add-hook 'darkroom-mode-hook (lambda () (tool-bar-mode 0)))
+    (add-hook 'darkroom-mode-hook (lambda () (menu-bar-mode 0)))
 
-  (scroll-bar-mode 0)
-  (tool-bar-mode 0)
-  (menu-bar-mode 0)
+    (scroll-bar-mode 0)
+    (tool-bar-mode 0)
+    (menu-bar-mode 0)
 
-  (global-set-key (kbd "C-c d") 'darkroom-mode))
+    (global-set-key (kbd "C-x C-m C-d") 'darkroom-mode))
 #+END_SRC
 
 #+RESULTS:
@@ -1095,14 +1102,14 @@ Provide multiple cursors
   (setq-default tab-width 4)
 
   ;; navigate through matches in list (may it be compilation messages or tag occurrences)
-  (global-set-key (kbd "C-, k") (lambda () (interactive) (next-match -1)))
-  (global-set-key (kbd "C-, j") (lambda () (interactive) (next-match +1)))
+  ;; (global-set-key (kbd "C-, k") (lambda () (interactive) (next-match -1)))
+  ;; (global-set-key (kbd "C-, j") (lambda () (interactive) (next-match +1)))
 
   (add-hook 'prog-mode-hook 'visual-line-mode)
 #+END_SRC
 
 #+RESULTS:
-| visual-line-mode | (lambda nil (interactive) (setq show-trailing-whitespace 1)) |
+| ws-butler-mode | visual-line-mode |
 
 ** python
 - *Windows:* If no ~python~ command is in the path, the error ~comint-send-string: Process Python Internal[[any-file.py]]~ may appear when trying to open any python file ~any-file.py~. Probably, ~python-mode~ wants to initialize some things and fails to do it without being able to call python. To fix this, install an independent python on your system (from the official source at https://www.python.org/downloads/windows), in a version that is stable enough (not necessarily the newest). When calling ~where python.exe~ from a plain ~cmd.exe~ (not an anaconda prompt), the installation path should be the first that appears (after having added it to ~PATH~). 
@@ -2132,12 +2139,13 @@ Managing jupyter sessions, opening ~.ipynb~ files from within emacs
     (if (file-directory-p load-dir)
         (progn
           (add-to-list 'load-path load-dir)
-          (require 'jupyters-manager))
+          (require 'jupyters-manager)
+          (global-set-key (kbd "C-, j s n") 'jm-new-server))
       (message (concat "Warning: " load-dir " does not exist"))))
 #+END_SRC
 
 #+RESULTS:
-: Warning: c:/Users/IEUser/cmisc/dotemacs/.emacs.d/elisp/jupyters-manager/ does not exist
+: jm-new-server
 
 ** COMMENT random strings
 #+BEGIN_SRC emacs-lisp

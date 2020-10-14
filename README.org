@@ -15,6 +15,14 @@ If ~%HOME%~ doesn't exist, emacs looks in the ~AppData~ directory. There you can
 cp .emacs_template_windows C:/Users/[username]/AppData/Roaming/.emacs
 #+END_SRC
 
+**** setting ~EMACS_SERVER_FILE~ environment variable to connect emacsclient to running server instance
+On windows, after having started emacs with ~(server-start)~ (e.g. put this command in the emacs init file), the variable ~server-auth-dir~ gives the path to a directory where the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/TCP-Emacs-server.html#TCP-Emacs-server][server file]] is being stored (provides connection information to clients). 
+#+BEGIN_SRC shell
+emacsclient -n --server-file "c:/Users/[User]/misc/dotemacs/.emacs.d/server/server" foo.txt
+#+END_SRC
+
+Unfortunately, setting permanent aliases in cmd is complicated. So, this situation is fixed by setting the environment variable ~EMACS_SERVER_FILE~ to the path of the server file. Then ~emacsclient foo.txt~ will open the file (add the ~-n~ option to have the terminal not blocked by the command). 
+
 *** on ubuntu
 Emacs looks to find ~.emacs~ in ~$HOME~, so say ~echo $HOME~ to find where to put the ~.emacs_template~ file. 
 Do the same thing as for windows, just adjust the paths. 
