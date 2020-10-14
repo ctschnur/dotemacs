@@ -1,4 +1,5 @@
-* dotemacs - my emacs configuration + unpolished elisp code
+* dotemacs - my emacs configuration 
+and unpolished elisp code. 
 ** Installation: 
 *** on windows
 The init file is first read from the location of the environment variable ~HOME~ (https://www.gnu.org/software/emacs/manual/html_node/efaq-w32/Location-of-init-file.html). 
@@ -23,18 +24,7 @@ The ~elisp~ directory should be used to hold clones of my own elisp packages (wh
 The ~.gitignore~ should ignore all subdirs in ~elisp/~, except ~in-dev~. 
 
 ** TODO List:   
-*** TODO get auto-completion and jump-to-definition for python working on Windows. 
-I tried all kinds of combinations:
-- anaconda mode with pyvenv
-- elpy, pyvenv (not conda- or windows-aware, just knows virtual environments on linux)
-- ~jedi.el~ on it's own
-**** Problems:
-- There is no directly usable standard python system python pre-installed on windows 
-(you need to run it as administrator). 
-- Some parsing libraries may rely on a /standard/ python installation that is not the 
-one in the virtual environment, just to run it's basic commands (e.g. elpy uses an 
-rpc process and an extra virtual environment for the rpc-python and it's packages). 
-**** Workarounds: 
+*** Workarounds for a working code navigation/completion server: use dumb-jump or
 - Within a project, use ~cs-helm-projectile-ag~ to search for definitions and jump to them. 
   To find files recursively in a project, use ~helm-projectile-find-file-from-directory~. 
 - I am starting to think of building my own completion library (or company backend), 
