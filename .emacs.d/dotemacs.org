@@ -1,4 +1,5 @@
 
+
 * Package-Initialize, repos, path
 ** COMMENT melpa and org repos
 This is done in ~.emacs~.
@@ -260,24 +261,30 @@ Version 0.6.5 produces errors when creating new frames. 0.6.6 fixes this (ostens
 #+END_SRC
 
 #+RESULTS:
-: undo-tree-redo
+: t
+
 ** helm
 Does a lot of useful auto-completion stuff all over emacs, e.g. when finding files or functions. Great for interactive selection and narrowing. Highly customizable.
 #+BEGIN_SRC emacs-lisp
-(use-package helm
-  :ensure t
-  :config
-  (helm-mode 1)
-  ;; (define-key global-map [remap find-file] 'helm-find-files)
-  ;; (global-set-key (kbd "C-, C-f") 'helm-find-files)
+  (use-package helm
+    :ensure t
+    :config
+    (helm-mode 1)
+    ;; (define-key global-map [remap find-file] 'helm-find-files)
+    ;; (global-set-key (kbd "C-, C-f") 'helm-find-files)
+    ;; select buffers with C-Space, delete selection with M-S-d
+    (global-set-key (kbd "C-2") 'helm-mini)
 
-  ;; select buffers with C-Space, delete selection with M-S-d
-  (global-set-key (kbd "C-2") 'helm-mini))
+    ;; find files and folders recursively in helm
+    (global-set-key (kbd "C-, C-f") 'helm-find))
 #+END_SRC
+
+#+RESULTS:
+: t
 
 ** COMMENT helm-fzf
 #+BEGIN_SRC emacs-lisp
-; Make sure that fzf is installed and in your path. 
+;; Make sure that fzf is installed and in your path. 
 (add-to-list 'exec-path (if (eq system-type 'windows-nt)
                               "C:/Users/nanospin/misc/fzf/"
                             (if (eq system-type 'gnu/linux)
@@ -343,6 +350,7 @@ Does a lot of useful auto-completion stuff all over emacs, e.g. when finding fil
 function can be made to work.
 
 ** helm-ag
+This is a cool package. It searches the directory recursively using ripgrep and gives a narrowed list of occurrances. It's also really fast. 
 #+BEGIN_SRC emacs-lisp
   (use-package helm-ag
     :ensure t
@@ -351,12 +359,24 @@ function can be made to work.
 
 #+RESULTS:
 
+** helm-rg
+This is a cool package. Like ~helm-ag~, it searches the directory recursively (using ripgrep instead of ag) and gives a narrowed list of occurrances.
+Call ~helm-rg~ to select a directory and then type a pattern to search for. 
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-rg
+    :ensure t
+    :config
+    (global-set-key (kbd "C-, R") 'helm-rg))
+#+END_SRC
+
+#+RESULTS:
+: t
+
 ** cs-helm-projectile-ag
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path (expand-file-name (concat user-emacs-directory "elisp/in-dev/")))
   (require 'cs-helm-projectile-ag)
-  (define-key prog-mode-map (kbd "C-, C-r") 'cs-helm-projectile-ag)
-  ;; (define-key org-mode-map (kbd "C-, C-r") 'cs-helm-projectile-ag)
+  (global-set-key (kbd "C-, C-r") 'cs-helm-projectile-ag) ;; mindblowing
 #+END_SRC
 
 #+RESULTS:
@@ -1337,24 +1357,25 @@ Bind some keys and some hooks
 
 *** smartparens
 #+BEGIN_SRC emacs-lisp
-  (use-package smartparens
-    :config
-    (show-smartparens-global-mode +1)
-    (smartparens-global-mode 1)
+    (use-package smartparens
+      :config
+      (show-smartparens-global-mode +1)
+      (smartparens-global-mode 1)
 
-    ;; when you press RET, the curly braces automatically
-    ;; add another newline
-    (sp-with-modes '(c-mode c++-mode)
-      (sp-local-pair "{" nil :post-handlers '(("||\n[i]" "RET")))
-      (sp-local-pair "/*" "*/" :post-handlers '((" | " "SPC")
-                                                ("* ||\n[i]" "RET"))))
+      ;; when you press RET, the curly braces automatically
+      ;; add another newline
+      (sp-with-modes '(c-mode c++-mode)
+        (sp-local-pair "{" nil :post-handlers '(("||\n[i]" "RET")))
+        (sp-local-pair "/*" "*/" :post-handlers '((" | " "SPC")
+                                                  ("* ||\n[i]" "RET"))))
 
-    (add-hook 'python-mode-hook
-              (lambda ()
-                (interactive)
-                (define-key python-mode-map (kbd "C-)") 'sp-forward-slurp-sexp)
-                (define-key python-mode-map (kbd "C-}") 'sp-forward-barf-sexp)
-                (define-key python-mode-map (kbd "<M-up>") 'sp-splice-sexp-killing-backward))))
+      (add-hook 'python-mode-hook
+                (lambda ()
+                  (interactive)
+                  (define-key python-mode-map (kbd "C-)") 'sp-forward-slurp-sexp)
+                  (define-key python-mode-map (kbd "C-}") 'sp-forward-barf-sexp)
+                  (define-key python-mode-map (kbd "<M-up>") 'sp-splice-sexp-killing-backward)
+                  (setq forward-sexp-function nil))))
 #+END_SRC
 
 #+RESULTS:
@@ -1432,7 +1453,7 @@ Completion for many languages or just tools in general, just plug in the right c
     (define-key c-mode-map  [(tab)] 'company-complete)
     (define-key c++-mode-map  [(tab)] 'company-complete)
     ;; (define-key python-mode-map [(tab)] 'company-complete)
-    (setq company-idle-delay 1)
+    (setq company-idle-delay 0.2)
     ;; Weirdly, I didn't manually have to specify all my includes,
     ;; maybe because projectile works with it?
     ;; ((nil . ((company-clang-arguments . ("-I/home/<user>/project_root/include1/"
@@ -1482,6 +1503,11 @@ Notes:
   (require 'lsp-mode)
   (add-hook 'python-mode-hook 'lsp-mode)
   (setq lsp-diagnostic-package :none)
+  ;; (setq lsp-eldoc-hook '(lsp-hover))
+  (setq lsp-enable-symbol-highlighting nil)
+  ;; (setq lsp-highlight-symbol-at-point nil)
+  (setq lsp-ui-doc-enable nil)
+
 
   (require 'lsp-ui)
   ;; (require 'company-lsp)
@@ -1725,10 +1751,14 @@ search in all file for a name, and then you can perform operations on these occu
 #+BEGIN_SRC emacs-lisp
   (use-package helm-ag
     :ensure t
-    :config)
+    :config
+    ;; search from a directory
+    (require 'cs-helm-ag)
+    (global-set-key (kbd "C-, C-a") 'cs-helm-ag))
 #+END_SRC
 
 #+RESULTS:
+: t
 
 ** c/c++
 *** COMMENT flycheck
