@@ -226,6 +226,16 @@ Quick up and down navigation
 #+END_SRC
 
 * general packages
+** tramp
+This requires installing ~PuTTY~ on windows and calling the command ~/plink:user@ip:/home/~ .
+#+BEGIN_SRC emacs-lisp
+  (when (eq system-type 'windows-nt)
+    (setq tramp-default-method "plink"))
+#+END_SRC
+
+#+RESULTS:
+: plink
+
 ** visual-regexp
 like ~query-replace-regexp~, but with live preview everywhere in the buffer, as you type.
 #+BEGIN_SRC emacs-lisp
@@ -366,9 +376,10 @@ On Windows, this program doesn't exist. Some recursive searching counsel functio
 
 *** counsel
 #+BEGIN_SRC emacs-lisp
-  (use-package counsel
-    :ensure t
-    :config)
+  (when (eq system-type 'gnu/linux)
+    (use-package counsel
+      :ensure t
+      :config))
 #+END_SRC
 
 #+RESULTS:
@@ -397,33 +408,34 @@ On Windows, this program doesn't exist. Some recursive searching counsel functio
                     'ivy-resume)
     (global-set-key (kbd "<f6>")
                     'ivy-resume)
-    (global-set-key (kbd "M-x")
-                    'counsel-M-x)
-    (global-set-key (kbd "C-x C-f")
-                    'counsel-find-file)
-    (global-set-key (kbd "<f1> f")
-                    'counsel-describe-function)
-    (global-set-key (kbd "<f1> v")
-                    'counsel-describe-variable)
-    (global-set-key (kbd "<f1> l")
-                    'counsel-find-library)
-    (global-set-key (kbd "<f2> i")
-                    'counsel-info-lookup-symbol)
-    (global-set-key (kbd "<f2> u")
-                    'counsel-unicode-char)
-    (global-set-key (kbd "C-c g")
-                    'counsel-git)
-    (global-set-key (kbd "C-c j")
-                    'counsel-git-grep)
-    (global-set-key (kbd "C-c k")
-                    'counsel-ag)
-    (global-set-key (kbd "C-x l")
-                    'counsel-locate)
-    (global-set-key (kbd "C-S-o")
-                    'counsel-rhythmbox)
-    (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
-    ;; (global-unset-key (kbd "C-x C-p"))
+    (when (eq system-type 'windows-nt)
+      (global-set-key (kbd "M-x")
+                      'counsel-M-x)
+      (global-set-key (kbd "C-x C-f")
+                      'counsel-find-file)
+      (global-set-key (kbd "<f1> f")
+                      'counsel-describe-function)
+      (global-set-key (kbd "<f1> v")
+                      'counsel-describe-variable)
+      (global-set-key (kbd "<f1> l")
+                      'counsel-find-library)
+      (global-set-key (kbd "<f2> i")
+                      'counsel-info-lookup-symbol)
+      (global-set-key (kbd "<f2> u")
+                      'counsel-unicode-char)
+      (global-set-key (kbd "C-c g")
+                      'counsel-git)
+      (global-set-key (kbd "C-c j")
+                      'counsel-git-grep)
+      (global-set-key (kbd "C-c k")
+                      'counsel-ag)
+      (global-set-key (kbd "C-x l")
+                      'counsel-locate)
+      (global-set-key (kbd "C-S-o")
+                      'counsel-rhythmbox)
+      (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history))
 
+    ;; (global-unset-key (kbd "C-x C-p"))
 
     (defun cs-counsel-fzf (arg)
       (interactive "P")
@@ -433,9 +445,9 @@ On Windows, this program doesn't exist. Some recursive searching counsel functio
         (counsel-fzf ""
                      (file-name-directory (buffer-file-name))
                      "in current directory: ")))
-  
+
     (global-set-key (kbd "C-x C-p") 'cs-counsel-fzf)
-  
+
     ;; this calls counsel-find-file
     (add-to-list 'load-path (expand-file-name cs-elisp-config-base-dir))
     (require 'cs-find-file-utils))
@@ -507,7 +519,9 @@ makes swiper use helm
     :config
     (setq magit-repository-directories `((,cs-elisp-config-base-dir . 3)
                                          (,cs-misc-programs-directory . 3)))
-    (global-set-key (kbd "C-, m l r") 'magit-list-repositories))
+    (global-set-key (kbd "C-, m r") 'magit-list-repositories)
+    (global-set-key (kbd "C-, m g") 'magit)
+    (global-set-key (kbd "C-, m l") 'magit-log))
 #+END_SRC
 
 #+RESULTS:
