@@ -399,10 +399,53 @@ On Windows, this program doesn't exist. Some recursive searching counsel functio
   (when (eq system-type 'gnu/linux)
     (use-package counsel
       :ensure t
-      :config))
+      :config
+
+      (when (eq system-type 'gnu/linux)
+        (global-set-key (kbd "M-x")
+                        'counsel-M-x)
+        (global-set-key (kbd "C-x C-f")
+                        'counsel-find-file)
+        (global-set-key (kbd "<f1> f")
+                        'counsel-describe-function)
+        (global-set-key (kbd "<f1> v")
+                        'counsel-describe-variable)
+        (global-set-key (kbd "<f1> l")
+                        'counsel-find-library)
+        (global-set-key (kbd "<f2> i")
+                        'counsel-info-lookup-symbol)
+        (global-set-key (kbd "<f2> u")
+                        'counsel-unicode-char)
+        (global-set-key (kbd "C-c g")
+                        'counsel-git)
+        (global-set-key (kbd "C-c j")
+                        'counsel-git-grep)
+        (global-set-key (kbd "C-c k")
+                        'counsel-ag)
+        (global-set-key (kbd "C-x l")
+                        'counsel-locate)
+        (global-set-key (kbd "C-S-o")
+                        'counsel-rhythmbox)
+        (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history))
+
+      (defun cs-counsel-fzf (arg)
+        (interactive "P")
+        (if (equal arg '(4))
+            (counsel-fzf nil
+                         (expand-file-name "~"))
+          (counsel-fzf ""
+                       (file-name-directory (buffer-file-name))
+                       "in current directory: ")))
+
+      (global-set-key (kbd "C-x C-p") 'cs-counsel-fzf)
+
+      ;; this calls counsel-find-file
+      (add-to-list 'load-path (expand-file-name cs-elisp-config-base-dir))
+      (require 'cs-find-file-utils)))
 #+END_SRC
 
 #+RESULTS:
+: t
 
 *** ivy
 #+BEGIN_SRC emacs-lisp
@@ -427,50 +470,7 @@ On Windows, this program doesn't exist. Some recursive searching counsel functio
     (global-set-key (kbd "C-c C-r")
                     'ivy-resume)
     (global-set-key (kbd "<f6>")
-                    'ivy-resume)
-    (when (eq system-type 'windows-nt)
-      (global-set-key (kbd "M-x")
-                      'counsel-M-x)
-      (global-set-key (kbd "C-x C-f")
-                      'counsel-find-file)
-      (global-set-key (kbd "<f1> f")
-                      'counsel-describe-function)
-      (global-set-key (kbd "<f1> v")
-                      'counsel-describe-variable)
-      (global-set-key (kbd "<f1> l")
-                      'counsel-find-library)
-      (global-set-key (kbd "<f2> i")
-                      'counsel-info-lookup-symbol)
-      (global-set-key (kbd "<f2> u")
-                      'counsel-unicode-char)
-      (global-set-key (kbd "C-c g")
-                      'counsel-git)
-      (global-set-key (kbd "C-c j")
-                      'counsel-git-grep)
-      (global-set-key (kbd "C-c k")
-                      'counsel-ag)
-      (global-set-key (kbd "C-x l")
-                      'counsel-locate)
-      (global-set-key (kbd "C-S-o")
-                      'counsel-rhythmbox)
-      (define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history))
-
-    ;; (global-unset-key (kbd "C-x C-p"))
-
-    (defun cs-counsel-fzf (arg)
-      (interactive "P")
-      (if (equal arg '(4))
-          (counsel-fzf nil
-                       (expand-file-name "~"))
-        (counsel-fzf ""
-                     (file-name-directory (buffer-file-name))
-                     "in current directory: ")))
-
-    (global-set-key (kbd "C-x C-p") 'cs-counsel-fzf)
-
-    ;; this calls counsel-find-file
-    (add-to-list 'load-path (expand-file-name cs-elisp-config-base-dir))
-    (require 'cs-find-file-utils))
+                    'ivy-resume))
 #+END_SRC
 
 #+RESULTS:
