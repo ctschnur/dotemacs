@@ -42,7 +42,8 @@
         ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
         ;; may have their own settings.
         ;; (load-theme 'doom-one t)
-        (load-theme 'doom-city-lights t)
+        ;; (load-theme 'doom-city-lights t)
+        (load-theme 'doom-laserwave t)
         ;; Enable flashing mode-line on errors
         (doom-themes-visual-bell-config)
         ;; Enable custom neotree theme (all-the-icons must be installed!)

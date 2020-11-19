@@ -115,23 +115,32 @@ start the emacs server at startup of an emacs instance
 
 customize annoying defaults
 #+BEGIN_SRC emacs-lisp
-(setq ring-bell-function 'ignore)
-(global-auto-revert-mode 1)
-(setq inhibit-startup-message t)
+  (setq ring-bell-function 'ignore)
+  (global-auto-revert-mode 1)
+  (setq inhibit-startup-message t)
 
-(scroll-bar-mode 0)
-(tool-bar-mode 0)
-(menu-bar-mode 0)
+  (scroll-bar-mode 0)  ;; by default, turn off scrollbars
+  (if (equal system-type 'windows-nt)
+      (progn
+        ;; chances are that i'm looking into code together with other people
+        ;; scrollbars everywhere 
+        (toggle-scroll-bar 1)
+        ;; except in minibuffer
+        (set-window-scroll-bars (minibuffer-window) nil nil))
+    (toggle-scroll-bar nil))
 
-(savehist-mode 1)
-(show-paren-mode 1)
-(setq show-paren-delay 0)
+  (tool-bar-mode 0)
+  (menu-bar-mode 0)
 
-(blink-cursor-mode 0)
-;; kill selected region at yank
-(delete-selection-mode 1)  
+  (savehist-mode 1)
+  (show-paren-mode 1)
+  (setq show-paren-delay 0)
 
-(setq delete-by-moving-to-trash t)
+  (blink-cursor-mode 0)
+  ;; kill selected region at yank
+  (delete-selection-mode 1)  
+
+  (setq delete-by-moving-to-trash t)
 #+END_SRC
 
 #+RESULTS:
