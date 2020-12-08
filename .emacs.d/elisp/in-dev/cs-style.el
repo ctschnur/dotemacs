@@ -76,6 +76,11 @@
 (with-eval-after-load 'org
   (add-hook 'org-mode-hook 'cs-set-line-spacing))
 
+(with-eval-after-load 'beacon
+  (setq beacon-blink-duration 0.1)
+  (setq beacon-size 10)
+  (setq beacon-blink-delay 0.3))
+
 
 ;; -------- line truncation in txt files ---------
 

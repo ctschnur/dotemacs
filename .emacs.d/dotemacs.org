@@ -1115,6 +1115,14 @@ Provide multiple cursors
 
 #+RESULTS:
 
+*** plur
+#+BEGIN_SRC emacs-lisp
+  (use-package plur
+    :ensure t)
+#+END_SRC
+
+#+RESULTS:
+
 * Programming general behaviour
 #+BEGIN_SRC emacs-lisp
   ;; automatically indent when press RET
@@ -1603,12 +1611,13 @@ Notes:
 : t
 
 ** python
-*** COMMENT py-autopep8
+*** py-autopep8
 #+BEGIN_SRC emacs-lisp
-  (use-package py-autopep8
-    :ensure t
-    :config
-    (define-key python-mode-map (kbd "C-, s") 'py-autopep8))
+  (when (eq system-type 'gnu/linux)
+    (use-package py-autopep8
+      :ensure t
+      :config
+      (define-key python-mode-map (kbd "C-, s") 'py-autopep8)))
 #+END_SRC
 
 #+RESULTS:
@@ -2001,7 +2010,6 @@ This tool is based on semantic. It doesn't really refactor, but it can e.g. refo
 #+RESULTS:
 : t
 
-
 ** COMMENT sage
 *** sage-shell-mode
 #+BEGIN_SRC emacs-lisp
@@ -2052,6 +2060,15 @@ This tool is based on semantic. It doesn't really refactor, but it can e.g. refo
 
 #+RESULTS:
 : t
+
+** browse-at-remote
+#+BEGIN_SRC emacs-lisp
+  (use-package browse-at-remote
+    :ensure t
+    :config)
+#+END_SRC
+
+#+RESULTS:
 
 * literature research packages
 ** COMMENT pdfgrep
