@@ -548,9 +548,14 @@ makes swiper use helm
     :config
     (setq magit-repository-directories `((,cs-elisp-config-base-dir . 3)
                                          (,cs-misc-programs-directory . 3)))
-    (global-set-key (kbd "C-, m r") 'magit-list-repositories)
-    (global-set-key (kbd "C-, m g") 'magit)
-    (global-set-key (kbd "C-, m l") 'magit-log))
+    (eval-after-load 'magit-mode
+      (progn
+        (global-set-key (kbd "C-, m r")
+                        'magit-list-repositories)
+        (global-set-key (kbd "C-, m g")
+                        'magit)
+        (global-set-key (kbd "C-, m l")
+                        'magit-log))))
 #+END_SRC
 
 #+RESULTS:
