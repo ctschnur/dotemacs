@@ -33,7 +33,7 @@
                            monitor))
                        (display-monitor-attributes-list)))))
 
-(defun make-frame-almost-fit-desktop (&optional monitor)
+(defun cs-frame-resize-make-frame-almost-fit-desktop (&optional monitor)
   "Resize a frame so that it is almost fullscreen, but leave small margins.
 If MONITOR is nil, use the current frame's monitor."
   (let* ((down-scale-vertical (if (eq system-type 'windows-nt)
